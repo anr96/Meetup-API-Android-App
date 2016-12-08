@@ -1,0 +1,54 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+    >
+
+    <ImageView
+        android:id="@+id/story_card"
+        android:src="@drawable/card"
+        android:layout_gravity="center"
+        android:layout_width="320dp"
+        android:layout_height="300dp"
+        />
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="320dp"
+        android:layout_height="220dp"
+        card_view:cardElevation="16dp"
+        card_view:cardCornerRadius="4dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView android:id="@+id/story_description"
+					  android:paddingLeft="20dp"
+					  android:paddingRight="20dp"
+					  android:layout_below="@+id/story_name"
+					  android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  android:textSize="14dp"
+					  android:hint="@string/story_description_hint"
+					  android:gravity="center_horizontal|fill_horizontal"/>
+
+            <TextView android:id="@+id/story_name"
+					  android:padding="8dp"
+					  android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:textStyle="italic"
+					  android:textSize="16dp"
+					  android:hint="@string/story_title_hint"
+					  android:gravity="center_horizontal"/>
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+</LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <android.support.design.widget.CoordinatorLayout -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+	android:orientation="vertical"
+    tools:context="com.fall16.csc413.team12.eventbrowserfinale.EventBrowserActivity">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/my_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary"
+		android:elevation="4dp"
+		android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/story_recycler_view"
+		android:layout_width="match_parent"
+		android:layout_height="603dp"
+		android:layout_marginTop="0dp"
+		/>
+
+</LinearLayout>
