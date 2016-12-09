@@ -3,14 +3,19 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +27,10 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +38,86 @@ import java.util.List;
  * Created by AmandaNikkole on 11/27/16.
  */
 
-public class StoryListFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class StoryListFragment extends Fragment implements SearchView.OnQueryTextListener,
+		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private RecyclerView mStoryRecyclerView;
     private StoryAdapter mAdapter;
 	//JsonController controller;
+	private GoogleApiClient mGoogleApiClient;
+	private Location mLastLocation;
+
+	private double mLatitude;
+	private double mLongitude;
 
 	private static final String TAG = "StoryListFragment";
 
-    @Override
+	// int required to ask permission for location
+	private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+
+		// Create an instance of GoogleAPIClient.
+		if (mGoogleApiClient == null) {
+			mGoogleApiClient = new GoogleApiClient.Builder(App.getContext())
+					.addConnectionCallbacks(this)
+					.addOnConnectionFailedListener(this)
+					.addApi(LocationServices.API)
+					.build();
+		}
+	}
+
+	@Override
+	public void onStart() {
+		mGoogleApiClient.connect();
+		super.onStart();
+	}
+
+	public void onStop() {
+		mGoogleApiClient.disconnect();
+		super.onStop();
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
+
+		if (ContextCompat.checkSelfPermission(App.getContext(),
+				android.Manifest.permission.ACCESS_COARSE_LOCATION )
+				!= PackageManager.PERMISSION_GRANTED ) {
+
+			ActivityCompat.requestPermissions(getActivity(), new String[] {
+					android.Manifest.permission.ACCESS_COARSE_LOCATION },
+					MY_PERMISSION_ACCESS_COARSE_LOCATION);
+		}
+
+		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+				mGoogleApiClient);
+		if (mLastLocation != null) {
+			mLatitude = mLastLocation.getLatitude();
+			Log.i(TAG, "Latitude is: " + mLatitude);
+			mLongitude = mLastLocation.getLongitude();
+			Log.i(TAG, "Longitude is: " + mLongitude);
+
+			//mLatitudeTextView.setText(String.valueOf(mLastLocation.getLatitude()));
+			//mLongitudeTextView.setText(String.valueOf(mLastLocation.getLongitude()));
+		}
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+		Log.i(TAG, "Connection Suspended");
+		mGoogleApiClient.connect();
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+		Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
+	}
+
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_story_list, container, false);
@@ -56,7 +136,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
         updateUI();
 
 		// Required for SearchView implementation
-		setHasOptionsMenu(true);
+		//setHasOptionsMenu(true);
 
 		/*
 		controller = new JsonController(
@@ -181,6 +261,8 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_item_story_description);
             mImageView = (ImageView) itemView.findViewById(R.id.list_item_story_card);
+
+
 
         }
 
