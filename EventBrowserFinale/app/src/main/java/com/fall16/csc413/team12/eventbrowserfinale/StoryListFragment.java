@@ -70,6 +70,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 		}
 	}
 
+	//HELLO
 	@Override
 	public void onStart() {
 		mGoogleApiClient.connect();
