@@ -15,4 +15,8 @@
 	<string name="search_title">Search</string>
 	<string name="search_hint">Search Cards</string>
 
+	 <string name="no_location_detected">
+        No location detected. Make sure location is enabled on the device.
+    </string>
+
 </resources>

@@ -26,6 +26,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -44,9 +45,16 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
     private RecyclerView mStoryRecyclerView;
     private StoryAdapter mAdapter;
 	//JsonController controller;
-	private GoogleApiClient mGoogleApiClient;
-	private Location mLastLocation;
 
+	/**
+	 * Provides the entry point to Google Play services.
+	 */
+	private GoogleApiClient mGoogleApiClient;
+
+	/**
+	 * Represents a geographical location.
+	 */
+	private Location mLastLocation;
 	private double mLatitude;
 	private double mLongitude;
 
@@ -61,67 +69,13 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 		setHasOptionsMenu(true);
 
 		// Create an instance of GoogleAPIClient.
-		if (mGoogleApiClient == null) {
-			mGoogleApiClient = new GoogleApiClient.Builder(App.getContext())
-					.addConnectionCallbacks(this)
-					.addOnConnectionFailedListener(this)
-					.addApi(LocationServices.API)
-					.build();
-		}
-	}
-
-	//HELLO
-	@Override
-	public void onStart() {
-		mGoogleApiClient.connect();
-		super.onStart();
-	}
-
-	public void onStop() {
-		mGoogleApiClient.disconnect();
-		super.onStop();
+		buildGoogleApiClient();
 	}
 
 	@Override
-	public void onConnected(Bundle connectionHint) {
-
-		if (ContextCompat.checkSelfPermission(App.getContext(),
-				android.Manifest.permission.ACCESS_COARSE_LOCATION )
-				!= PackageManager.PERMISSION_GRANTED ) {
-
-			ActivityCompat.requestPermissions(getActivity(), new String[] {
-					android.Manifest.permission.ACCESS_COARSE_LOCATION },
-					MY_PERMISSION_ACCESS_COARSE_LOCATION);
-		}
-
-		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-				mGoogleApiClient);
-		if (mLastLocation != null) {
-			mLatitude = mLastLocation.getLatitude();
-			Log.i(TAG, "Latitude is: " + mLatitude);
-			mLongitude = mLastLocation.getLongitude();
-			Log.i(TAG, "Longitude is: " + mLongitude);
-
-			//mLatitudeTextView.setText(String.valueOf(mLastLocation.getLatitude()));
-			//mLongitudeTextView.setText(String.valueOf(mLastLocation.getLongitude()));
-		}
-	}
-
-	@Override
-	public void onConnectionSuspended(int i) {
-		Log.i(TAG, "Connection Suspended");
-		mGoogleApiClient.connect();
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-		Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
-	}
-
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_story_list, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState){
+		View view = inflater.inflate(R.layout.fragment_story_list, container, false);
 
 		// Create the toolbar for this fragment
 		Toolbar toolbar = (Toolbar) view.findViewById(R.id.my_toolbar);
@@ -132,9 +86,9 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 		mStoryRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
-        mStoryRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+		mStoryRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        updateUI();
+		updateUI();
 
 		// Required for SearchView implementation
 		//setHasOptionsMenu(true);
@@ -162,8 +116,8 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 				});
 				*/
 
-        return view;
-    }
+		return view;
+	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -174,18 +128,18 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 		searchMenuItem.expandActionView();
 		MenuItemCompat.setOnActionExpandListener(searchMenuItem,
 				new MenuItemCompat.OnActionExpandListener() {
-			@Override
-			public boolean onMenuItemActionExpand(MenuItem item) {
-				return true;
-			}
+					@Override
+					public boolean onMenuItemActionExpand(MenuItem item) {
+						return true;
+					}
 
-			@Override
-			public boolean onMenuItemActionCollapse(MenuItem item) {
-				// Refresh the list when pressing back button on Search widget
-				updateUI();
-				return true;
-			}
-		});
+					@Override
+					public boolean onMenuItemActionCollapse(MenuItem item) {
+						// Refresh the list when pressing back button on Search widget
+						updateUI();
+						return true;
+					}
+				});
 
 		// Associate searchable configuration with the SearchView
 		SearchManager searchManager =
@@ -240,6 +194,74 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 		return true;
 	}
 
+	/**
+	 * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+	 */
+	protected synchronized void buildGoogleApiClient() {
+
+		if (mGoogleApiClient == null) {
+			mGoogleApiClient = new GoogleApiClient.Builder(App.getContext())
+					.addConnectionCallbacks(this)
+					.addOnConnectionFailedListener(this)
+					.addApi(LocationServices.API)
+					.build();
+		}
+	}
+
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		mGoogleApiClient.connect();
+	}
+
+	public void onStop() {
+		super.onStop();
+		if (mGoogleApiClient.isConnected()) {
+			mGoogleApiClient.disconnect();
+		}
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		// Provides a simple way of getting a device's location and is well suited for
+		// applications that do not require a fine-grained location and that do not need location
+		// updates. Gets the best and most recent location currently available, which may be null
+		// in rare cases when a location is not available.
+
+		// Check for location permissions
+		if (ContextCompat.checkSelfPermission(App.getContext(),
+				android.Manifest.permission.ACCESS_COARSE_LOCATION )
+				!= PackageManager.PERMISSION_GRANTED ) {
+
+			ActivityCompat.requestPermissions(getActivity(), new String[] {
+					android.Manifest.permission.ACCESS_COARSE_LOCATION },
+					MY_PERMISSION_ACCESS_COARSE_LOCATION);
+		}
+
+		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+				mGoogleApiClient);
+		if (mLastLocation != null) {
+			mLatitude = mLastLocation.getLatitude();
+			Log.i(TAG, "Latitude is: " + mLatitude);
+			mLongitude = mLastLocation.getLongitude();
+			Log.i(TAG, "Longitude is: " + mLongitude);
+		}
+		else {
+			Toast.makeText(getActivity(), R.string.no_location_detected, Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+		Log.i(TAG, "Connection Suspended");
+		mGoogleApiClient.connect();
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+		Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
+	}
 
     // ViewHolder holds onto a View
     private class StoryHolder extends RecyclerView.ViewHolder
