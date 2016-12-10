@@ -38,7 +38,7 @@ import java.util.List;
  * Created by AmandaNikkole on 11/27/16.
  */
 
-public class StoryListFragment extends Fragment implements SearchView.OnQueryTextListener,
+public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTextListener,
 		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private RecyclerView mStoryRecyclerView;
@@ -50,7 +50,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 	private double mLatitude;
 	private double mLongitude;
 
-	private static final String TAG = "StoryListFragment";
+	private static final String TAG = "MeetUpListFragment";
 
 	// int required to ask permission for location
 	private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
@@ -121,7 +121,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_story_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_meet_up_list, container, false);
 
 		// Create the toolbar for this fragment
 		Toolbar toolbar = (Toolbar) view.findViewById(R.id.my_toolbar);
@@ -278,7 +278,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 
         @Override
         public void onClick(View v){
-            Intent intent = EventBrowserActivity.newIntent(getActivity(), mStory.getUuid());
+            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mStory.getUuid());
 			startActivity(intent);
 
         }
@@ -300,7 +300,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
         @Override
         public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(R.layout.list_item_story,
+            View view = layoutInflater.inflate(R.layout.list_item_meet_up,
                     parent, false);
             return new StoryHolder(view);
         }

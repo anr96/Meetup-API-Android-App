@@ -6,19 +6,19 @@ import android.support.v4.app.Fragment;
 
 import java.util.UUID;
 
-public class EventBrowserActivity extends SingleFragmentActivity {
+public class MeetUpDetailsActivity extends SingleFragmentActivity {
 
 	public static final String EXTRA_STORY_ID = "eventbroswer.story_id";
 
 	public static Intent newIntent(Context packageContext, UUID storyId) {
-		Intent intent = new Intent(packageContext, EventBrowserActivity.class);
+		Intent intent = new Intent(packageContext, MeetUpDetailsActivity.class);
 		intent.putExtra(EXTRA_STORY_ID, storyId);
 		return intent;
 	}
 
 	@Override
 	protected Fragment createFragment() {
-		return new EventBrowserFragment();
+		return new MeetUpDetailsFragment();
 	}
 
 
