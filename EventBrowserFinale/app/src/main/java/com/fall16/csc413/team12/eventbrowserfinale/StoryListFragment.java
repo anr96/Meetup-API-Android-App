@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
@@ -208,6 +209,12 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 		}
 	}
 
+	protected void createLocationRequest() {
+		LocationRequest mLocationRequest = new LocationRequest();
+		mLocationRequest.setInterval(10000);
+		mLocationRequest.setFastestInterval(5000);
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	}
 
 	@Override
 	public void onStart() {
@@ -239,8 +246,8 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 					MY_PERMISSION_ACCESS_COARSE_LOCATION);
 		}
 
-		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-				mGoogleApiClient);
+		getLocation();
+
 		if (mLastLocation != null) {
 			mLatitude = mLastLocation.getLatitude();
 			Log.i(TAG, "Latitude is: " + mLatitude);
