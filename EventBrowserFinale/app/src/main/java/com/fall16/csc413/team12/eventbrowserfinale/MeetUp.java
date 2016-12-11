@@ -3,6 +3,8 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 /**
  * Created by AmandaNikkole on 12/10/16.
  */
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,36 +17,42 @@ import java.util.UUID;
  * Model class for meetup
  * */
 public class MeetUp {
-    private UUID meetUpId;
+
+	private String meetUpId;
     private String name;
     private String link;
     private String description;
-    //private String city;
     private String noAttendees;
     private String pictureURL;
 
 
     /**
      *
-     * @param jsonObject    {@link JSONObject} response, received in Volley success listener
+     * @param jsonArray    {@link JSONArray} response, received in Volley success listener
      * @return  list of meetups
      * @throws JSONException
      */
-    public static List<MeetUp> parseJson(JSONObject jsonObject) throws JSONException {
+
+	public static List<MeetUp> parseJson(JSONArray jsonArray) throws JSONException {
 
 		List<MeetUp> meetUps = new ArrayList<>();
 
-		// Check if the JSONObject has object with key "#", varies 0 and on
-		if(jsonObject.has("")) {
-			//Get JSONArray from JSONObject
-			JSONArray jsonArray = jsonObject.getJSONArray("");
+		try {
+			// Parsing json array response, loop through each json object
 			for (int i = 0; i < jsonArray.length(); i++) {
 				// Create new MeetUp object from each JSONObject in the JSONArray
-				meetUps.add(new MeetUp(jsonArray.getJSONObject(i)));
+				JSONObject meetup = (JSONObject) jsonArray.get(i);
+				meetUps.add(new MeetUp(meetup));
 			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			Toast.makeText(App.getContext(),
+					"Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
 		}
 
-        return meetUps;
+		return  meetUps;
     }
 
     /**
@@ -85,14 +93,13 @@ public class MeetUp {
         this.pictureURL = pictureURL;
     }
 
-    public UUID getMeetUpId() {
-        return meetUpId;
-    }
+	public String getMeetUpId() {
+		return meetUpId;
+	}
 
-    public void setMeetUpId(String stringMeetUpId) {
-        meetUpId = UUID.fromString(stringMeetUpId);
-    }
-
+	public void setMeetUpId(String stringMeetUpId) {
+		meetUpId = stringMeetUpId;
+	}
     public String getNoAttendees() {
         return noAttendees;
     }

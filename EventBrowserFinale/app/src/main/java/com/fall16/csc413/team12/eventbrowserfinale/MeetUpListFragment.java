@@ -95,7 +95,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	JsonController mController;
 	TextView mTextView;
 
-
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
@@ -134,7 +133,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 						if(meetUps.size() > 0) {
 							//mController.cancelAllRequests();
 							//mController.sendRequest();
-							//textView.setVisibility(View.GONE);
 							mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 							mMeetUpRecyclerView.invalidate();
 							mAdapter.updateDataSet(meetUps);
@@ -187,10 +185,13 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		searchView.setSearchableInfo(searchManager.
 				getSearchableInfo(getActivity().getComponentName()));
 		searchView.setOnQueryTextListener(this);
+		searchView.clearFocus();
 	}
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
+		mController.cancelAllRequests();
+		mController.sendRequest();
 		Log.d(TAG, "QueryTextSubmit: " + query);
 		mAdapter.getFilter().filter(query);
 		updateUI();
@@ -452,9 +453,9 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         }
     }
 
-/**
- * Adapter begins here which calles the MeetUpHolder (CardView Holder)
- * */
+	/**
+ 	* Adapter begins here which calls the MeetUpHolder (CardView Holder)
+ 	* */
     private class MeetUpAdapter extends RecyclerView.Adapter<MeetUpHolder> implements Filterable {
 
 		private List<MeetUp> mMeetUpList;

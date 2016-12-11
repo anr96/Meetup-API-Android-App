@@ -40,10 +40,6 @@ public class JsonController {
     //public void sendRequest(String query){
 	public void sendRequest() {
 
-//        String[] location = query.split(" ");
-//        String longitude = location[0];
-//        String latitude = location[1];
-
          //String longitude = "0.1278";
          //String latitude = "51.5074";
 
