@@ -5,7 +5,8 @@ import android.net.Uri;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonRequest;
+//import com.android.volley.toolbox.JsonRequest;
+import com.fall16.csc413.team12.eventbrowserfinale.JsonRequest;
 
 import java.util.List;
 
@@ -13,63 +14,75 @@ import java.util.List;
  * Created by wgalan on 12/7/16.
  */
 
-/*
+
 public class JsonController {
 
-	private final int TAG = 100;
+    private final int TAG = 100;
 
-	private OnResponseListener responseListener;
+    private OnResponseListener responseListener;
 
-	public JsonController(OnResponseListener responseListener) {
-		this.responseListener = responseListener;
-	}
+    public JsonController(OnResponseListener responseListener) {
+        this.responseListener = responseListener;
+    }
 
-	// Adds request to volley request queue
-	public void sendRequest(String query){
+    // Adds request to volley request queue
+    public void sendRequest(String query){
 
-		// Request Method
-		int method = Request.Method.GET;
+//        String[] location = query.split(" ");
+//        String longitude = location[0];
+//        String latitude = location[1];
 
-		// Url with GET parameters
-		String url = "http://www.omdbapi.com/?s=" + Uri.encode(query) + "&t=movie";
+         String longitude = "0.1278";
+         String latitude = "51.5074";
 
-		// Create new request using JsonRequest
-		JsonRequest request
-				= new JsonRequest(
-				method,
-				url,
-				new Response.Listener<List<Story>>() {
-					@Override
-					public void onResponse(List<Story> movies) {
-						responseListener.onSuccess(movies);
-					}
-				},
-				new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						responseListener.onFailure(error.getMessage());
-					}
-				}
-		);
+        //TODO latitude and longitude = 51.507351 & -0.127758
+        // Request Method
+        int method = Request.Method.GET;
 
-		// Add tag to request
-		request.setTag(TAG);
+        // Url with GET parameters
+        String url = "https://api.meetup.com/find/groups?&sign=" +
+                "true&photo-host=public&lon=" + longitude +
+                "&lat=" + latitude + "&page=10&desc=" +
+                Uri.encode(query) + "&key=103066133866724c245743e5b397b6c";
 
-		// Get RequestQueue from VolleySingleton
-		VolleySingleton.getInstance(App.getContext()).addToRequestQueue(request);
-	}
+        // Create new request using JsonRequest
+        JsonRequest request
+                = new JsonRequest(
+                method,
+                url,
+                //done with request, let you know if it works with 1/2 listeners
+                new Response.Listener<List<MeetUp>>() {
+                    @Override
+                    public void onResponse(List<MeetUp> meetUps) {
+                        responseListener.onSuccess(meetUps); //seen in main activity
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        responseListener.onFailure(error.getMessage());
+                    }
+                }
+        );
 
-	// Cancels all request pending in request queue
-	// There is no way to control the request already processed
-	public void cancelAllRequests() {
-		VolleySingleton.getInstance(App.getContext()).cancelAllRequests(TAG);
-	}
+        // Add tag to request
+        request.setTag(TAG);
 
-	// Interface to communicate between {@link android.app.Activity} and {@link JsonRequest}
-	public interface OnResponseListener {
-		void onSuccess(List<Story> movies);
-		void onFailure(String errorMessage);
-	}
+        // Get RequestQueue from VolleySingleton
+        VolleySingleton.getInstance(App.getContext()).addToRequestQueue(request);
+    }
+
+    // Cancels all request pending in request queue
+    // There is no way to control the request already processed
+    public void cancelAllRequests() {
+        VolleySingleton.getInstance(App.getContext()).cancelAllRequests(TAG);
+    }
+
+    // Interface to communicate between {@link android.app.Activity} and {@link JsonRequest}
+    public interface OnResponseListener {
+        void onSuccess(List<MeetUp> meetUps);
+        void onFailure(String errorMessage);
+    }
 
 }
-*/
+

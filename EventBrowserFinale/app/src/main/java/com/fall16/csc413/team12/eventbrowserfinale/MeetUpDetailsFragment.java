@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 
 public class MeetUpDetailsFragment extends Fragment {
-    private Story mStory;
+    private MeetUp mMeetUp;
     private TextView mNameField;
     private TextView mDescriptionField;
     private ImageView mImageView;
@@ -24,9 +24,10 @@ public class MeetUpDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        UUID storyId = (UUID) getActivity().getIntent()
-                .getSerializableExtra(MeetUpDetailsActivity.EXTRA_STORY_ID);
-        mStory = StoryLab.get(getActivity()).getStory(storyId);
+        //TODO fix EVENTBROSWER_MEET_UP_ID
+        UUID meetUpId = (UUID) getActivity().getIntent()
+                .getSerializableExtra(MeetUpDetailsActivity.EVENTBROSWER_MEET_UP_ID);
+        mMeetUp = MeetUpLab.get(getActivity()).getMeetUp(meetUpId);
 
     }
 
@@ -36,9 +37,10 @@ public class MeetUpDetailsFragment extends Fragment {
         //explicitly inflate the fragment's view
         View v = inflater.inflate(R.layout.fragment_meet_up_details, container, false);
         mNameField = (TextView) v.findViewById(R.id.story_name);
-        mNameField.setText(mStory.getStoryName());
+        mNameField.setText(mMeetUp.getName());
         mDescriptionField = (TextView) v.findViewById(R.id.story_description);
-        mDescriptionField.setText(mStory.getDescription());
+        mDescriptionField.setText(mMeetUp.getDescription());
+        //TODO fix to appropriate fields
         mImageView = (ImageView) v.findViewById(R.id.story_card);
         mImageView.setImageResource(R.drawable.shrek);
 

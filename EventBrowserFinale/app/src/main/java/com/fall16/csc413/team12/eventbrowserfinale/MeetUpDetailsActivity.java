@@ -8,11 +8,11 @@ import java.util.UUID;
 
 public class MeetUpDetailsActivity extends SingleFragmentActivity {
 
-	public static final String EXTRA_STORY_ID = "eventbroswer.story_id";
+	public static final String EVENTBROSWER_MEET_UP_ID = "eventbroswer.meet_up_id";
 
 	public static Intent newIntent(Context packageContext, UUID storyId) {
 		Intent intent = new Intent(packageContext, MeetUpDetailsActivity.class);
-		intent.putExtra(EXTRA_STORY_ID, storyId);
+		intent.putExtra(EVENTBROSWER_MEET_UP_ID, storyId);
 		return intent;
 	}
 
