@@ -2,6 +2,7 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -49,23 +50,10 @@ import java.util.List;
  */
 
 public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTextListener,
-<<<<<<< HEAD
 		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
-=======
-		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
-
-    private RecyclerView mMeetUpRecyclerView;
-    private MeetUpAdapter mAdapter;
-	JsonController mController;
-	TextView mTextView;
-	private GoogleApiClient mGoogleApiClient;
-	private Location mLastLocation;
-
-	private double mLatitude;
-	private double mLongitude;
->>>>>>> origin/ARBranch
 
 	private static final String TAG = "MeetUpListFragment";
+	public static final String PREFS_NAME = "MyPrefsFile";
 
 	// The desired interval for location updates. Inexact. Updates may be more or less frequent.
 	public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
@@ -102,9 +90,12 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	// int required to ask permission for location
 	private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
 
-	private RecyclerView mStoryRecyclerView;
-	private StoryAdapter mAdapter;
-	//JsonController controller;
+	private RecyclerView mMeetUpRecyclerView;
+	private MeetUpAdapter mAdapter;
+	JsonController mController;
+	TextView mTextView;
+
+
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,17 +110,11 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		// Hides the title defined in manifest.xml as app_name from Toolbar
 		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-<<<<<<< HEAD
-		mStoryRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
-		mStoryRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-		mRequestingLocationUpdates = false;
-		mLastUpdateTime = "";
-=======
 		mMeetUpRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
         mMeetUpRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
->>>>>>> origin/ARBranch
+		mRequestingLocationUpdates = false;
+		mLastUpdateTime = "";
 
 		// Update values using data stored in the Bundle.
 		updateValuesFromBundle(savedInstanceState);
@@ -141,7 +126,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		setHasOptionsMenu(true);
 
 		updateUI();
-
 
 		mController = new JsonController(
 				new JsonController.OnResponseListener() {
@@ -159,12 +143,11 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 					@Override
 					public void onFailure(String errorMessage) {
 						Toast.makeText(getContext(), "Failed to retrieve data", Toast.LENGTH_SHORT).show();
-//						textView.setVisibility(View.VISIBLE);
-//						textView.setText("Failed to retrieve data");
-//						Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+						//textView.setVisibility(View.VISIBLE);
+						//textView.setText("Failed to retrieve data");
+						//Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
 					}
 				});
-
 
 		return view;
 	}
@@ -244,7 +227,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		return true;
 	}
 
-<<<<<<< HEAD
 	private void updateValuesFromBundle(Bundle savedInstanceState) {
 		Log.i(TAG, "Updating values from bundle");
 		if (savedInstanceState != null) {
@@ -355,12 +337,14 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			mLongitude = mCurrentLocation.getLongitude();
 			Log.i(TAG, "Longitude is: " + mLongitude);
 
-			/*
-			Intent in = new Intent(App.getContext(), JsonRequest.class);
-			in.putExtra("lat", mLatitude);
-			in.putExtra("long", mLongitude);
-			startActivity(in);
-			*/
+			// We need an Editor object to make preference changes.
+			// All objects are from android.context.Context
+			SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putString("Latitude", String.valueOf(mLatitude));
+			editor.putString("Longitude", String.valueOf(mLongitude));
+			// Commit the edits!
+			editor.commit();
 		}
 
 		if (mRequestingLocationUpdates) {
@@ -398,32 +382,22 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
-=======
-/**
- * Recycler View Adapter
- * */
->>>>>>> origin/ARBranch
+	/**
+ 	* Recycler View Adapter
+ 	* */
     // ViewHolder holds onto a View
     private class MeetUpHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
         private TextView mNameTextView;
         private TextView mDescriptionTextView;
-<<<<<<< HEAD
-        private TextView mStoryNameTextView;
-        private ImageView mImageView;
-        private Story mStory;
 
-        public StoryHolder(View itemView) {
-
-=======
         private TextView mLink;
         private NetworkImageView mImageView;
 
         private MeetUp mMeetUp;
 
         public MeetUpHolder(View itemView){
->>>>>>> origin/ARBranch
             super(itemView);
             itemView.setOnClickListener(this);
 
@@ -432,13 +406,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
             mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPoster);
         }
-
-<<<<<<< HEAD
-            mDescriptionTextView =
-					(TextView) itemView.findViewById(R.id.list_item_story_description);
-            mImageView = (ImageView) itemView.findViewById(R.id.list_item_story_card);
-        }
-=======
 		void setName(String name) {
 			String n = "Name:\n" + name;
 			mNameTextView.setText(n);
@@ -458,9 +425,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
 			mImageView.setImageUrl(photoUrl, imageLoader);
 		}
-
-
->>>>>>> origin/ARBranch
 
         public void bindStory(MeetUp meetUp){
             mMeetUp = meetUp;
