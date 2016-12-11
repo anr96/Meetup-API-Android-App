@@ -1,5 +1,6 @@
 package com.fall16.csc413.team12.eventbrowserfinale;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 
 import com.android.volley.Request;
@@ -10,6 +11,8 @@ import com.fall16.csc413.team12.eventbrowserfinale.JsonRequest;
 
 import java.util.List;
 
+import static com.fall16.csc413.team12.eventbrowserfinale.MeetUpListFragment.PREFS_NAME;
+
 /**
  * Created by wgalan on 12/7/16.
  */
@@ -18,6 +21,10 @@ import java.util.List;
 public class JsonController {
 
     private final int TAG = 100;
+
+	SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
+	private String LatString = settings.getString("Latitude", "");
+	private String LongString = settings.getString("Longitude", "");
 
     private OnResponseListener responseListener;
 

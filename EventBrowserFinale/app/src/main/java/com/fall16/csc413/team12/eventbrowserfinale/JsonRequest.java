@@ -13,8 +13,6 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import static com.fall16.csc413.team12.eventbrowserfinale.MeetUpListFragment.PREFS_NAME;
-
 /**
  * Created by wgalan on 12/7/16.
  */
@@ -23,10 +21,6 @@ public class JsonRequest extends Request<List<MeetUp>> {
 
     // Success listener implemented in controller
     private Response.Listener<List<MeetUp>> successListener;
-
-	SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
-	private String LatString = settings.getString("Latitude", "");
-	private String LongString = settings.getString("Longitude", "");
 
     /**
      * Class constructor
