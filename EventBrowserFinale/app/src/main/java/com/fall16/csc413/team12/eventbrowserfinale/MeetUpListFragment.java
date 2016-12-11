@@ -2,7 +2,6 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -26,7 +26,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -41,9 +44,10 @@ import java.util.List;
 public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTextListener,
 		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
-    private RecyclerView mStoryRecyclerView;
-    private StoryAdapter mAdapter;
-	//JsonController controller;
+    private RecyclerView mMeetUpRecyclerView;
+    private MeetUpAdapter mAdapter;
+	JsonController mController;
+	TextView mTextView;
 	private GoogleApiClient mGoogleApiClient;
 	private Location mLastLocation;
 
@@ -131,36 +135,38 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		// Hides the title defined in manifest.xml as app_name from Toolbar
 		((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-		mStoryRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
-        mStoryRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+		mMeetUpRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
+        mMeetUpRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
         updateUI();
 
 		// Required for SearchView implementation
 		//setHasOptionsMenu(true);
 
-		/*
-		controller = new JsonController(
+
+		mController = new JsonController(
 				new JsonController.OnResponseListener() {
 					@Override
-					public void onSuccess(List<Movie> movies) {
-						if(movies.size() > 0) {
-							textView.setVisibility(View.GONE);
-							recyclerView.setVisibility(View.VISIBLE);
-							recyclerView.invalidate();
-							adapter.updateDataSet(movies);
-							recyclerView.setAdapter(adapter);
+					public void onSuccess(List<MeetUp> meetUps) {
+						if(meetUps.size() > 0) {
+							//textView.setVisibility(View.GONE);
+							mMeetUpRecyclerView.setVisibility(View.VISIBLE);
+							mMeetUpRecyclerView.invalidate();
+							mAdapter.updateDataSet(meetUps);
+							mMeetUpRecyclerView.setAdapter(mAdapter);
 						}
 					}
 
 					@Override
 					public void onFailure(String errorMessage) {
-						textView.setVisibility(View.VISIBLE);
-						textView.setText("Failed to retrieve data");
-						Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getContext(), "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+//						textView.setVisibility(View.VISIBLE);
+//						textView.setText("Failed to retrieve data");
+//						Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
 					}
 				});
-				*/
+
 
         return view;
     }
@@ -206,32 +212,32 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		//mAdapter.getFilter().filter(query);
 		//updateUI();
 
-		/*
+
 		if(query.length() > 1) {
-			controller.cancelAllRequests();
-			controller.sendRequest(query);
+			mController.cancelAllRequests();
+			mController.sendRequest(query);
 			return false;
 		} else {
-			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
-			recyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText("Must provide more than one character to search");
+//			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
+			mMeetUpRecyclerView.setVisibility(View.GONE);
+//			textView.setVisibility(View.VISIBLE);
+//			textView.setText("Must provide more than one character to search");
 			return true;
 		}
-		*/
-		return false;
+
+		//return false;
 	}
 
 	// Call filter based on single character change
 	@Override
 	public boolean onQueryTextChange(String newText) {
-		mStoryRecyclerView.setVisibility(View.VISIBLE);
+		mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 		mAdapter.getFilter().filter(newText);
 
 		/*
 		if(newText.length() > 1) {
-			controller.cancelAllRequests();
-			controller.sendRequest(newText);
+			mController.cancelAllRequests();
+			mController.sendRequest(newText);
 		} else if(newText.equals("")) {
 			recyclerView.setVisibility(View.GONE);
 			textView.setVisibility(View.VISIBLE);
@@ -240,93 +246,144 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		return true;
 	}
 
-
+/**
+ * Recycler View Adapter
+ * */
     // ViewHolder holds onto a View
-    private class StoryHolder extends RecyclerView.ViewHolder
+    private class MeetUpHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
         private TextView mNameTextView;
         private TextView mDescriptionTextView;
-        private TextView mStoryNameTextView;
-        private ImageView mImageView;
-        private Story mStory;
+        private TextView mLink;
+        private NetworkImageView mImageView;
 
+        private MeetUp mMeetUp;
 
-
-        public StoryHolder(View itemView){
+        public MeetUpHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
 
-            mNameTextView = (TextView) itemView.findViewById(R.id.list_item_card_name);
-            mStoryNameTextView = (TextView) itemView.findViewById(R.id.list_item_story_name);
-
-            mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_item_story_description);
-            mImageView = (ImageView) itemView.findViewById(R.id.list_item_story_card);
-
-
-
+			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
+            mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+            mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
+            mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPoster);
         }
 
-        
-        public void bindStory(Story story){
-            mStory = story;
-            mNameTextView.setText(mStory.getName());
-            mDescriptionTextView.setText(mStory.getDescription());
-            mStoryNameTextView.setText(mStory.getStoryName());
-            mImageView.setImageResource(R.drawable.shrek);
+		void setName(String name) {
+			String n = "Name:\n" + name;
+			mNameTextView.setText(n);
+		}
+
+		void setLink(String link) {
+			String n = "Link:\n" + link;
+			mLink.setText(n);
+		}
+
+		void setDescription(String description) {
+			String n = "Description:\n" + description;
+			mDescriptionTextView.setText(n);
+		}
+
+		void setPhotoUrl(String photoUrl){
+			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
+			mImageView.setImageUrl(photoUrl, imageLoader);
+		}
+
+
+
+        public void bindStory(MeetUp meetUp){
+            mMeetUp = meetUp;
+			//TODO bind correct fields
+            mNameTextView.setText(mMeetUp.getName());
+            mDescriptionTextView.setText(mMeetUp.getDescription());
+            mLink.setText(mMeetUp.getLink());
+
+            //mImageView.setImageResource(R.drawable.shrek);
         }
 
         @Override
         public void onClick(View v){
-            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mStory.getUuid());
-			startActivity(intent);
+			//TODO so that when event is clicked, the second activity pops up the correct info
+			//should meetUpId be a UUID?
+//
+//            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getMeetUpId());
+//			startActivity(intent);
 
         }
     }
 
+/**
+ * Adapter begins here which calles the MeetUpHolder (CardView Holder)
+ * */
+    private class MeetUpAdapter extends RecyclerView.Adapter<MeetUpHolder> implements Filterable {
 
-    private class StoryAdapter extends RecyclerView.Adapter<StoryHolder> implements Filterable {
+		private List<MeetUp> mMeetUpList;
+		private List<MeetUp> mMeetUpListCopy;
+		private Filter mMeetUpFilter;
+		//private OnClickListener listener;
 
-		private List<Story> mStories;
-		private List<Story> mStoriesCopy;
-		private Filter mStoryFilter;
+        public MeetUpAdapter(List<MeetUp> meetUpList){
 
-        public StoryAdapter(List<Story> stories){
-
-			mStories = stories;
-			mStoriesCopy = stories;
+			mMeetUpList = meetUpList;
+			mMeetUpListCopy = meetUpList;
         }
 
         @Override
-        public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        public MeetUpHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater.inflate(R.layout.list_item_meet_up,
                     parent, false);
-            return new StoryHolder(view);
+            return new MeetUpHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(StoryHolder holder, int position){
-            holder.mStoryNameTextView.setText(mStories.get(position).getStoryName());
-            Story story = mStories.get(position);
-            holder.bindStory(story);
+        public void onBindViewHolder(MeetUpHolder holder, int position){
+			MeetUp meetUp = mMeetUpList.get(position);
+
+			MeetUpHolder meetUpHolder = (MeetUpHolder) holder;
+			meetUpHolder.setName(meetUp.getName());
+			meetUpHolder.setLink(meetUp.getLink());
+			meetUpHolder.setDescription(meetUp.getDescription());
+			meetUpHolder.setPhotoUrl(meetUp.getPictureURL());
+//			if(listener != null){
+//				meetUpHolder.bindClickListener(listener,meetUp);
+//			}
+
+//			//TODO fix mLink
+//            holder.mLink.setText(mMeetUpList.get(position).getName());
+//            MeetUp meetUp = mMeetUpList.get(position);
+//            holder.bindStory(meetUp);
         }
 
         @Override
         public int getItemCount(){
-			return mStories.size();
+			return mMeetUpList.size();
         }
 
+		/**
+		 * Removes older data from movieList and update it.
+		 * Once the data is updated, notifies RecyclerViewAdapter.
+		 * @param modelList list of meetups
+		 */
+		public void updateDataSet(List<MeetUp> modelList) {
+			this.mMeetUpList.clear();
+			this.mMeetUpList.addAll(modelList);
+			notifyDataSetChanged();
+		}
+
+		//public void setListener(OnClickListener listener){this.listener = listener;}
 
 		@Override
 		public Filter getFilter() {
-			if (mStoryFilter == null) {
-				mStoryFilter = new StoryFilter();
+			if (mMeetUpFilter == null) {
+				mMeetUpFilter = new MeetUpFilter();
 			}
-			return mStoryFilter;
+			return mMeetUpFilter;
 		}
 
-		private class StoryFilter extends Filter {
+
+		private class MeetUpFilter extends Filter {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
@@ -335,40 +392,40 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 				// We implement the filter logic here
 				if (constraint == null || constraint.length() == 0) {
 					// No filter implemented we return all the list
-					results.values = mStories;
-					results.count = mStories.size();
+					results.values = mMeetUpList;
+					results.count = mMeetUpList.size();
 
 				}
 				else {
 					// We perform filtering operation
-					List<Story> filteredStories = new ArrayList<Story>();
+					List<MeetUp> filteredMeetUps = new ArrayList<MeetUp>();
 
-					for (Story s : mStoriesCopy) {
-						if (s.getStoryName().toUpperCase().startsWith(constraint.
+					for (MeetUp m : mMeetUpListCopy) {
+						if (m.getName().toUpperCase().startsWith(constraint.
 								toString().toUpperCase())) {
-							filteredStories.add(s);
+							filteredMeetUps.add(m);
 						}
 					}
 
-					results.values = filteredStories;
-					results.count = filteredStories.size();
+					results.values = filteredMeetUps;
+					results.count = filteredMeetUps.size();
 				}
 				return results;
 			}
 
 			@Override
 			protected void publishResults (CharSequence constraint, FilterResults results) {
-				mStories = (List<Story>) results.values;
+				mMeetUpList = (List<MeetUp>) results.values;
 				notifyDataSetChanged();
 			}
 		}
     }
 
     private void updateUI(){
-        StoryLab storyLab = StoryLab.get(getActivity());
-        List<Story> stories = storyLab.getStories();
+        MeetUpLab meetUpLab = MeetUpLab.get(getActivity());
+        List<MeetUp> meetUps = meetUpLab.getMeetUps();
 
-        mAdapter = new StoryAdapter(stories);
-        mStoryRecyclerView.setAdapter(mAdapter);
+        mAdapter = new MeetUpAdapter(meetUps);
+        mMeetUpRecyclerView.setAdapter(mAdapter);
     }
 }

@@ -18,6 +18,17 @@
 				  android:layout_height="128dp"
 				  android:elevation="4dp">
 
+	  <com.android.volley.toolbox.NetworkImageView
+		  android:id="@+id/nivPoster"
+		  android:layout_width="100dp"
+		  android:layout_height="130dp"
+		  android:layout_marginEnd="20dp"
+		  android:layout_marginRight="20dp"
+		  android:src="@drawable/card"
+		  android:layout_alignParentEnd="true"
+		  android:layout_alignParentRight="true"
+		  android:layout_centerVertical="true"/>
+<!--
 	  <ImageView
 		  android:id="@+id/list_item_story_card"
 		  android:layout_width="115dp"
@@ -27,33 +38,33 @@
 		  android:layout_marginRight="6dp"
 		  android:paddingTop="50dp"
 		  android:padding="4dp"/>
-
+-->
 	  <TextView
-		android:id="@+id/list_item_card_name"
+		android:id="@+id/list_meet_up_name"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_toLeftOf="@+id/list_item_story_card"
+		android:layout_toLeftOf="@+id/nivPoster"
 		android:textStyle="bold"
 		android:paddingTop="8dp"
-		tools:text="Card Number"
+		tools:text="Name"
 		android:paddingLeft="15dp"
 		android:paddingBottom="10dp"/>
 
 
 	<TextView
-	  android:id="@+id/list_item_story_name"
+	  android:id="@+id/list_meet_up_link"
 	  android:layout_width="match_parent"
 	  android:layout_height="wrap_content"
 	  android:textStyle="bold"
-	  tools:text="Name"
-	  android:layout_below="@+id/list_item_card_name"
-	  android:layout_toLeftOf="@+id/list_item_story_card"
-	  android:layout_toStartOf="@+id/list_item_story_card"
+	  tools:text="Link"
+	  android:layout_below="@+id/list_meet_up_name"
+	  android:layout_toLeftOf="@+id/nivPoster"
+	  android:layout_toStartOf="@+id/nivPoster"
 	  android:paddingLeft="15dp"
 	  android:paddingBottom="8dp"/>
 
 	<TextView
-	  android:id="@+id/list_item_story_description"
+	  android:id="@+id/list_meet_up_description"
 	  android:layout_width="match_parent"
 	  android:layout_height="wrap_content"
 	  android:textStyle="bold"
@@ -61,11 +72,11 @@
 	  android:paddingLeft="4dp"
 	  android:paddingBottom="8dp"
 	  android:layout_marginLeft="10dp"
-	  android:layout_below="@+id/list_item_story_name"
+	  android:layout_below="@+id/list_meet_up_link"
 	  android:layout_alignParentLeft="true"
 	  android:layout_alignParentStart="true"
-	  android:layout_toLeftOf="@+id/list_item_story_card"
-	  android:layout_toStartOf="@+id/list_item_story_card"
+	  android:layout_toLeftOf="@+id/nivPoster"
+	  android:layout_toStartOf="@+id/nivPoster"
 	  android:layout_marginRight="10dp"/>
 
   </RelativeLayout>
