@@ -39,15 +39,17 @@ public class JsonRequest extends Request<List<MeetUp>> {
 
     @Override
     protected Response<List<MeetUp>> parseNetworkResponse(NetworkResponse response) {
-        // Convert byte[] data received in the response to String
+
+		// Convert byte[] data received in the response to String
         String jsonString = new String(response.data);
+
         List<MeetUp> meetUps;
         JSONObject jsonObject;
         Log.i(this.getClass().getName(), jsonString);
+
         // Try to convert JsonString to list of meetups
         try {
             // Convert JsonString to JSONObject
-            //W/System.err: TODO
             jsonObject = new JSONObject(jsonString);
             // Get list of meetups from received JSON
             meetUps = MeetUp.parseJson(jsonObject);
@@ -63,7 +65,7 @@ public class JsonRequest extends Request<List<MeetUp>> {
     }
 
     @Override
-    protected void deliverResponse(List<MeetUp> movies) {
-        successListener.onResponse(movies);
+    protected void deliverResponse(List<MeetUp> meetUps) {
+        successListener.onResponse(meetUps);
     }
 }

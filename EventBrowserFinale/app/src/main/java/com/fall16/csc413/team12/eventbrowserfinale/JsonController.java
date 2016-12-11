@@ -2,6 +2,7 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -21,10 +22,13 @@ import static com.fall16.csc413.team12.eventbrowserfinale.MeetUpListFragment.PRE
 public class JsonController {
 
     private final int TAG = 100;
+	private static final String API_KEY = "16742d314d494331274718b366222c";
 
+	/*
 	SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
 	private String LatString = settings.getString("Latitude", "");
 	private String LongString = settings.getString("Longitude", "");
+	*/
 
     private OnResponseListener responseListener;
 
@@ -33,24 +37,29 @@ public class JsonController {
     }
 
     // Adds request to volley request queue
-    public void sendRequest(String query){
+    //public void sendRequest(String query){
+	public void sendRequest() {
 
 //        String[] location = query.split(" ");
 //        String longitude = location[0];
 //        String latitude = location[1];
 
-         String longitude = "0.1278";
-         String latitude = "51.5074";
+         //String longitude = "0.1278";
+         //String latitude = "51.5074";
 
-        //TODO latitude and longitude = 51.507351 & -0.127758
         // Request Method
         int method = Request.Method.GET;
 
+		/*
         // Url with GET parameters
         String url = "https://api.meetup.com/find/groups?&sign=" +
-                "true&photo-host=public&lon=" + longitude +
-                "&lat=" + latitude + "&page=10&desc=" +
-                Uri.encode(query) + "&key=103066133866724c245743e5b397b6c";
+                "true&photo-host=public&lon=" + LongString +
+                "&lat=" + LatString + "&page=10&" + "&key=103066133866724c245743e5b397b6c";
+        */
+
+		// Test Url with no GET parameters
+		String url = "https://api.meetup.com/find/groups?&sign=true" +
+				"&photo-host=public&page=10&key=16742d314d494331274718b366222c";
 
         // Create new request using JsonRequest
         JsonRequest request

@@ -96,7 +96,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	TextView mTextView;
 
 
-
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
@@ -127,11 +126,14 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 		updateUI();
 
+		// TODO Need to implement Jsoncontroller request here
 		mController = new JsonController(
 				new JsonController.OnResponseListener() {
 					@Override
 					public void onSuccess(List<MeetUp> meetUps) {
 						if(meetUps.size() > 0) {
+							//mController.cancelAllRequests();
+							//mController.sendRequest();
 							//textView.setVisibility(View.GONE);
 							mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 							mMeetUpRecyclerView.invalidate();
@@ -189,29 +191,31 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		//Log.d(TAG, "QueryTextSubmit: " + query);
-		//mAdapter.getFilter().filter(query);
-		//updateUI();
+		Log.d(TAG, "QueryTextSubmit: " + query);
+		mAdapter.getFilter().filter(query);
+		updateUI();
 
-
+		/*
 		if(query.length() > 1) {
 			mController.cancelAllRequests();
-			mController.sendRequest(query);
+			//mController.sendRequest(query);
+			//mController.sendRequest();
 			return false;
 		} else {
-//			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
 			mMeetUpRecyclerView.setVisibility(View.GONE);
-//			textView.setVisibility(View.VISIBLE);
-//			textView.setText("Must provide more than one character to search");
+			textView.setVisibility(View.VISIBLE);
+			textView.setText("Must provide more than one character to search");
 			return true;
 		}
-
-		//return false;
+		*/
+		return true;
 	}
 
 	// Call filter based on single character change
 	@Override
 	public boolean onQueryTextChange(String newText) {
+		Log.d(TAG, "QueryTextChange: " + newText);
 		mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 		mAdapter.getFilter().filter(newText);
 
@@ -428,6 +432,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
         public void bindStory(MeetUp meetUp){
             mMeetUp = meetUp;
+
 			//TODO bind correct fields
             mNameTextView.setText(mMeetUp.getName());
             mDescriptionTextView.setText(mMeetUp.getDescription());
@@ -473,21 +478,33 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
         @Override
         public void onBindViewHolder(MeetUpHolder holder, int position){
+
+			holder.mNameTextView.setText(mMeetUpList.get(position).getName());
+			holder.mLink.setText(mMeetUpList.get(position).getLink());
+			holder.mDescriptionTextView.setText(mMeetUpList.get(position).getDescription());
+			MeetUp meetUp = mMeetUpList.get(position);
+			holder.bindStory(meetUp);
+
+			/*
 			MeetUp meetUp = mMeetUpList.get(position);
 
-			MeetUpHolder meetUpHolder = (MeetUpHolder) holder;
+			MeetUpHolder meetUpHolder = holder;
 			meetUpHolder.setName(meetUp.getName());
 			meetUpHolder.setLink(meetUp.getLink());
 			meetUpHolder.setDescription(meetUp.getDescription());
 			meetUpHolder.setPhotoUrl(meetUp.getPictureURL());
-//			if(listener != null){
-//				meetUpHolder.bindClickListener(listener,meetUp);
-//			}
+			*/
 
-//			//TODO fix mLink
-//            holder.mLink.setText(mMeetUpList.get(position).getName());
-//            MeetUp meetUp = mMeetUpList.get(position);
-//            holder.bindStory(meetUp);
+			/*
+			if(listener != null){
+				meetUpHolder.bindClickListener(listener,meetUp);
+			}
+
+			//TODO fix mLink
+			holder.mLink.setText(mMeetUpList.get(position).getName());
+			MeetUp meetUp = mMeetUpList.get(position);
+			holder.bindStory(meetUp);
+			*/
         }
 
         @Override
@@ -496,7 +513,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         }
 
 		/**
-		 * Removes older data from movieList and update it.
+		 * Removes older data from MeetUpList and updates it.
 		 * Once the data is updated, notifies RecyclerViewAdapter.
 		 * @param modelList list of meetups
 		 */

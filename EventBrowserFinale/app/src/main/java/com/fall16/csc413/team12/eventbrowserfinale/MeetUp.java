@@ -30,25 +30,19 @@ public class MeetUp {
      * @return  list of meetups
      * @throws JSONException
      */
-    public static List<MeetUp> parseJson(JSONObject jsonObject) throws JSONException{
-        List<MeetUp> meetUps = new ArrayList<>();
-        // Check if the JSONObject has object with key "#", varies 0 and on
-//        //TODO .has(??) 0 only gets first object
-//        for(int i = 0; i < 10; i++) {
-//            if (jsonObject.has(Integer.toString(i))) {
-//        if(jsonObject.has("0")){
-//                // Get JSONArray from JSONObject
-//                //JSONArray jsonArray = jsonObject.getJSONArray(Integer.toString(i));
-//                JSONArray jsonArray = jsonObject.getJSONArray("0");
-//                for (int j = 0; j < jsonArray.length(); j++) {
-//                    // Create new MeetUp object from each JSONObject in the JSONArray
-//                    meetUps.add(new MeetUp(jsonArray.getJSONObject(j)));
-//                }
-//            }
-        JSONArray jsonArray = jsonObject.getJSONArray("");
-        for (int i = 0; i< jsonArray.length();i++){
-            meetUps.add(new MeetUp((jsonArray.getJSONObject(i))));
-        }
+    public static List<MeetUp> parseJson(JSONObject jsonObject) throws JSONException {
+
+		List<MeetUp> meetUps = new ArrayList<>();
+
+		// Check if the JSONObject has object with key "#", varies 0 and on
+		if(jsonObject.has("")) {
+			//Get JSONArray from JSONObject
+			JSONArray jsonArray = jsonObject.getJSONArray("");
+			for (int i = 0; i < jsonArray.length(); i++) {
+				// Create new MeetUp object from each JSONObject in the JSONArray
+				meetUps.add(new MeetUp(jsonArray.getJSONObject(i)));
+			}
+		}
 
         return meetUps;
     }
@@ -64,7 +58,6 @@ public class MeetUp {
         if(jsonObject.has("name")) this.setName(jsonObject.getString("name"));
         if(jsonObject.has("link")) this.setLink(jsonObject.getString("link"));
         if(jsonObject.has("description")) this.setDescription(jsonObject.getString("description"));
-       // if(jsonObject.has("city")) this.setCity(jsonObject.getString("city"));
         if(jsonObject.has("members")) this.setNoAttendees(jsonObject.getString("members"));
 
         /*
@@ -124,11 +117,4 @@ public class MeetUp {
         this.link = link;
     }
 
-//    public String getCity() {
-//        return city;
-//    }
-//
-//    public void setCity(String city) {
-//        this.city = city;
-//    }
 }
