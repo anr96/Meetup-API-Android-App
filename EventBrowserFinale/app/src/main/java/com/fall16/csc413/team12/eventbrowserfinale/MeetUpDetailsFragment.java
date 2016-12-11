@@ -9,16 +9,13 @@ import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-
 import java.util.UUID;
 
 /**
  * Created by AmandaNikkole on 11/27/16.
  */
 
-public class EventBrowserFragment extends Fragment {
+public class MeetUpDetailsFragment extends Fragment {
     private Story mStory;
     private TextView mNameField;
     private TextView mDescriptionField;
@@ -28,7 +25,7 @@ public class EventBrowserFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         UUID storyId = (UUID) getActivity().getIntent()
-                .getSerializableExtra(EventBrowserActivity.EXTRA_STORY_ID);
+                .getSerializableExtra(MeetUpDetailsActivity.EXTRA_STORY_ID);
         mStory = StoryLab.get(getActivity()).getStory(storyId);
 
     }
@@ -37,7 +34,7 @@ public class EventBrowserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         //explicitly inflate the fragment's view
-        View v = inflater.inflate(R.layout.fragment_event_browser, container, false);
+        View v = inflater.inflate(R.layout.fragment_meet_up_details, container, false);
         mNameField = (TextView) v.findViewById(R.id.story_name);
         mNameField.setText(mStory.getStoryName());
         mDescriptionField = (TextView) v.findViewById(R.id.story_description);

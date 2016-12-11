@@ -40,7 +40,7 @@ import java.util.List;
  * Created by AmandaNikkole on 11/27/16.
  */
 
-public class StoryListFragment extends Fragment implements SearchView.OnQueryTextListener,
+public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTextListener,
 		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private RecyclerView mStoryRecyclerView;
@@ -59,7 +59,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 	private double mLatitude;
 	private double mLongitude;
 
-	private static final String TAG = "StoryListFragment";
+	private static final String TAG = "MeetUpListFragment";
 
 	// int required to ask permission for location
 	private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
@@ -74,9 +74,51 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 	}
 
 	@Override
+<<<<<<< HEAD:EventBrowserFinale/app/src/main/java/com/fall16/csc413/team12/eventbrowserfinale/StoryListFragment.java
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState){
 		View view = inflater.inflate(R.layout.fragment_story_list, container, false);
+=======
+	public void onConnected(Bundle connectionHint) {
+
+		if (ContextCompat.checkSelfPermission(App.getContext(),
+				android.Manifest.permission.ACCESS_COARSE_LOCATION )
+				!= PackageManager.PERMISSION_GRANTED ) {
+
+			ActivityCompat.requestPermissions(getActivity(), new String[] {
+					android.Manifest.permission.ACCESS_COARSE_LOCATION },
+					MY_PERMISSION_ACCESS_COARSE_LOCATION);
+		}
+
+		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+				mGoogleApiClient);
+		if (mLastLocation != null) {
+			mLatitude = mLastLocation.getLatitude();
+			Log.i(TAG, "Latitude is: " + mLatitude);
+			mLongitude = mLastLocation.getLongitude();
+			Log.i(TAG, "Longitude is: " + mLongitude);
+
+			//mLatitudeTextView.setText(String.valueOf(mLastLocation.getLatitude()));
+			//mLongitudeTextView.setText(String.valueOf(mLastLocation.getLongitude()));
+		}
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+		Log.i(TAG, "Connection Suspended");
+		mGoogleApiClient.connect();
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+		Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
+	}
+
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.fragment_meet_up_list, container, false);
+>>>>>>> origin:EventBrowserFinale/app/src/main/java/com/fall16/csc413/team12/eventbrowserfinale/MeetUpListFragment.java
 
 		// Create the toolbar for this fragment
 		Toolbar toolbar = (Toolbar) view.findViewById(R.id.my_toolbar);
@@ -307,7 +349,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
 
         @Override
         public void onClick(View v){
-            Intent intent = EventBrowserActivity.newIntent(getActivity(), mStory.getUuid());
+            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mStory.getUuid());
 			startActivity(intent);
 
         }
@@ -329,7 +371,7 @@ public class StoryListFragment extends Fragment implements SearchView.OnQueryTex
         @Override
         public StoryHolder onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(R.layout.list_item_story,
+            View view = layoutInflater.inflate(R.layout.list_item_meet_up,
                     parent, false);
             return new StoryHolder(view);
         }
