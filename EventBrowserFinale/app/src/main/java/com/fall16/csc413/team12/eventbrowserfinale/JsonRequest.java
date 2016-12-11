@@ -1,7 +1,5 @@
 package com.fall16.csc413.team12.eventbrowserfinale;
 
-import android.util.Log;
-
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -12,15 +10,21 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import static com.fall16.csc413.team12.eventbrowserfinale.MeetUpListFragment.mLatitude;
+
 /**
  * Created by wgalan on 12/7/16.
  */
 
-/*
+
 public class JsonRequest extends Request<List<Story>> {
 
 	// Success listener implemented in controller
 	private Response.Listener<List<Story>> successListener;
+
+	private static final String TAG = "JsonRequest";
+
+	double lat = mLatitude;
 
 	public JsonRequest( int method,
 						String url,
@@ -59,4 +63,3 @@ public class JsonRequest extends Request<List<Story>> {
 		successListener.onResponse(movies);
 	}
 }
-*/

@@ -74,7 +74,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	// Represents a geographical location.
 	protected Location mCurrentLocation;
 
-	private double mLatitude;
+	public static double mLatitude;
 	private double mLongitude;
 
 	// Tracks the status of the location updates request.
@@ -330,6 +330,13 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			Log.i(TAG, "Latitude is: " + mLatitude);
 			mLongitude = mCurrentLocation.getLongitude();
 			Log.i(TAG, "Longitude is: " + mLongitude);
+
+			/*
+			Intent in = new Intent(App.getContext(), JsonRequest.class);
+			in.putExtra("lat", mLatitude);
+			in.putExtra("long", mLongitude);
+			startActivity(in);
+			*/
 		}
 
 		if (mRequestingLocationUpdates) {

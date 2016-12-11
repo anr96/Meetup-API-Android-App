@@ -20,7 +20,8 @@ public class DatabaseTable {
 	private static final String TAG = "EventBrowserDatabase";
 
 	//The columns we'll include in the dictionary table
-	public static final String COL_NAME = "NAME";
+	public static final String COL_LAT = "LAT";
+	public static final String COL_LONG = "LONG";
 
 	private static final String DATABASE_NAME = "DATABASE";
 	private static final String FTS_VIRTUAL_TABLE = "FTS";
@@ -33,8 +34,8 @@ public class DatabaseTable {
 	}
 
 	// Following two methods searches for the query
-	public Cursor getNameMatches(String query, String[] columns) {
-		String selection = COL_NAME + " MATCH ?";
+	public Cursor getLocationMatches(String query, String[] columns) {
+		String selection = COL_LAT + " MATCH ?";
 		String[] selectionArgs = new String[] {query+"*"};
 
 		return query(selection, selectionArgs, columns);
@@ -65,7 +66,7 @@ public class DatabaseTable {
 		private static final String FTS_TABLE_CREATE =
 				"CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE +
 						" USING fts3 (" +
-						COL_NAME + ")";
+						COL_LAT + ")";
 
 		DatabaseOpenHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -88,7 +89,7 @@ public class DatabaseTable {
 
 		public long addName(String name) {
 			ContentValues initialValues = new ContentValues();
-			initialValues.put(COL_NAME, name);
+			initialValues.put(COL_LAT, name);
 
 			return mDatabase.insert(FTS_VIRTUAL_TABLE, null, initialValues);
 		}
