@@ -93,7 +93,11 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	private RecyclerView mMeetUpRecyclerView;
 	private MeetUpAdapter mAdapter;
 	JsonController mController;
-	TextView mTextView;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,16 +127,11 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		// Required for SearchView implementation
 		setHasOptionsMenu(true);
 
-		updateUI();
-
-		// TODO Need to implement Jsoncontroller request here
 		mController = new JsonController(
 				new JsonController.OnResponseListener() {
 					@Override
 					public void onSuccess(List<MeetUp> meetUps) {
 						if(meetUps.size() > 0) {
-							//mController.cancelAllRequests();
-							//mController.sendRequest();
 							mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 							mMeetUpRecyclerView.invalidate();
 							mAdapter.updateDataSet(meetUps);
@@ -142,12 +141,18 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 					@Override
 					public void onFailure(String errorMessage) {
-						Toast.makeText(getContext(), "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getContext(), "Failed to retrieve data",
+								Toast.LENGTH_SHORT).show();
 						//textView.setVisibility(View.VISIBLE);
 						//textView.setText("Failed to retrieve data");
 						//Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
 					}
 				});
+
+		// Request data from MeetUp API
+		mController.sendRequest();
+
+		updateUI();
 
 		return view;
 	}
@@ -190,8 +195,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		mController.cancelAllRequests();
-		mController.sendRequest();
 		Log.d(TAG, "QueryTextSubmit: " + query);
 		mAdapter.getFilter().filter(query);
 		updateUI();
@@ -474,6 +477,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater.inflate(R.layout.list_item_meet_up,
                     parent, false);
+
             return new MeetUpHolder(view);
         }
 
