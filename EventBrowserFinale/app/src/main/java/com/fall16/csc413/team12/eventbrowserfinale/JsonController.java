@@ -22,13 +22,13 @@ import static com.fall16.csc413.team12.eventbrowserfinale.MeetUpListFragment.PRE
 public class JsonController {
 
     private final int TAG = 100;
+
+	// Personal API Key for MeetUP
 	private static final String API_KEY = "16742d314d494331274718b366222c";
 
-	/*
 	SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
-	private String LatString = settings.getString("Latitude", "");
-	private String LongString = settings.getString("Longitude", "");
-	*/
+	private String Latitude = settings.getString("Latitude", "");
+	private String Longitude = settings.getString("Longitude", "");
 
     private OnResponseListener responseListener;
 
@@ -37,25 +37,15 @@ public class JsonController {
     }
 
     // Adds request to volley request queue
-    //public void sendRequest(String query){
 	public void sendRequest() {
-
-         //String longitude = "0.1278";
-         //String latitude = "51.5074";
 
         // Request Method
         int method = Request.Method.GET;
 
-		/*
         // Url with GET parameters
         String url = "https://api.meetup.com/find/groups?&sign=" +
-                "true&photo-host=public&lon=" + LongString +
-                "&lat=" + LatString + "&page=10&" + "&key=103066133866724c245743e5b397b6c";
-        */
-
-		// Test Url with no GET parameters
-		String url = "https://api.meetup.com/find/groups?&sign=true" +
-				"&photo-host=public&page=10&key=16742d314d494331274718b366222c";
+                "true&photo-host=public&lon=" + Longitude +
+                "&lat=" + Latitude + "&page=10&" + "&key=" + API_KEY;
 
         // Create new request using JsonRequest
         JsonRequest request
@@ -85,7 +75,6 @@ public class JsonController {
     }
 
     // Cancels all request pending in request queue
-    // There is no way to control the request already processed
     public void cancelAllRequests() {
         VolleySingleton.getInstance(App.getContext()).cancelAllRequests(TAG);
     }
