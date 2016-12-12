@@ -19,6 +19,7 @@ public class MeetUpDetailsFragment extends Fragment {
     private MeetUp mMeetUp;
     private TextView mNameField;
     private TextView mDescriptionField;
+	//private TextView mNumberOfGroupMembersField;
     private ImageView mImageView;
 
     @Override
@@ -37,10 +38,11 @@ public class MeetUpDetailsFragment extends Fragment {
         //explicitly inflate the fragment's view
         View v = inflater.inflate(R.layout.fragment_meet_up_details, container, false);
         mNameField = (TextView) v.findViewById(R.id.story_name);
-        mNameField.setText(mMeetUp.getName());
+        mNameField.setText(mMeetUp.getGroupName());
         mDescriptionField = (TextView) v.findViewById(R.id.story_description);
-        mDescriptionField.setText(mMeetUp.getDescription());
-        //TODO fix to appropriate fields
+        mDescriptionField.setText(mMeetUp.getGroupDescription());
+
+		//TODO fix to appropriate fields
         mImageView = (ImageView) v.findViewById(R.id.story_card);
         mImageView.setImageResource(R.drawable.shrek);
 

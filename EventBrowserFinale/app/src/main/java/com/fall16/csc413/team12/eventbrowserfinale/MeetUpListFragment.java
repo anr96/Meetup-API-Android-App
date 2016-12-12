@@ -403,10 +403,13 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             implements View.OnClickListener{
 
         private TextView mNameTextView;
+		private TextView mNumberMembersTextView;
         private TextView mDescriptionTextView;
+		private NetworkImageView mImageView;
 
+		// Optional textviews for now
         private TextView mLink;
-        private NetworkImageView mImageView;
+
 
         private MeetUp mMeetUp;
 
@@ -415,13 +418,19 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             itemView.setOnClickListener(this);
 
 			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
-            mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+            //mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+			mNumberMembersTextView = (TextView) itemView.findViewById(R.id.list_meet_up_members);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
             mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPhoto);
         }
+
 		void setName(String name) {
 			String n = "Name:\n" + name;
 			mNameTextView.setText(n);
+		}
+
+		void setNumberMembers(String nummembers) {
+			String n = "Members:\n" + nummembers;
 		}
 
 		void setLink(String link) {
@@ -443,17 +452,19 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             mMeetUp = meetUp;
 
 			//TODO bind correct fields
-            mNameTextView.setText(mMeetUp.getName());
+            mNameTextView.setText(mMeetUp.getGroupName());
 
 			// Remove HTML tags from Description String
 			if (Build.VERSION.SDK_INT >= API_LEVEL) {
-				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getDescription(),
+				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription(),
 						Html.FROM_HTML_MODE_LEGACY));
 			} else {
-				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getDescription()));
+				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
 			}
 
-            mLink.setText(mMeetUp.getLink());
+            //mLink.setText(mMeetUp.getLink());
+
+			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
 
             //mImageView.setImageResource(R.drawable.shrek);
         }
@@ -497,10 +508,12 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         @Override
         public void onBindViewHolder(MeetUpHolder holder, int position){
 
-			holder.mNameTextView.setText(mMeetUpList.get(position).getName());
-			holder.mLink.setText(mMeetUpList.get(position).getLink());
-			holder.mDescriptionTextView.setText(mMeetUpList.get(position).getDescription());
-			holder.setPhotoUrl(mMeetUpList.get(position).getPictureURL());
+			holder.mNameTextView.setText(mMeetUpList.get(position).getGroupName());
+			//holder.mLink.setText(mMeetUpList.get(position).getLink());
+			holder.mDescriptionTextView.setText(mMeetUpList.get(position).getGroupDescription());
+			holder.setPhotoUrl(mMeetUpList.get(position).getGroupPhotoLinkURL());
+			holder.mNumberMembersTextView.setText(mMeetUpList.get(position).
+					getNumberOfGroupMembers());
 			MeetUp meetUp = mMeetUpList.get(position);
 			holder.bindStory(meetUp);
 
@@ -570,7 +583,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 					List<MeetUp> filteredMeetUps = new ArrayList<MeetUp>();
 
 					for (MeetUp m : mMeetUpListCopy) {
-						if (m.getName().toUpperCase().startsWith(constraint.
+						if (m.getGroupName().toUpperCase().startsWith(constraint.
 								toString().toUpperCase())) {
 							filteredMeetUps.add(m);
 						}

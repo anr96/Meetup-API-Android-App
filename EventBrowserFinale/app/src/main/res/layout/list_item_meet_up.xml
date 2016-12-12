@@ -50,7 +50,19 @@
 		android:paddingLeft="15dp"
 		android:paddingBottom="10dp"/>
 
+	  <TextView
+		  android:id="@+id/list_meet_up_members"
+		  android:layout_width="match_parent"
+		  android:layout_height="wrap_content"
+		  android:textStyle="bold"
+		  tools:text="Members"
+		  android:layout_below="@+id/list_meet_up_name"
+		  android:layout_toLeftOf="@+id/nivPhoto"
+		  android:layout_toStartOf="@+id/nivPhoto"
+		  android:paddingLeft="15dp"
+		  android:paddingBottom="8dp"/>
 
+	  <!--
 	<TextView
 	  android:id="@+id/list_meet_up_link"
 	  android:layout_width="match_parent"
@@ -61,7 +73,7 @@
 	  android:layout_toLeftOf="@+id/nivPhoto"
 	  android:layout_toStartOf="@+id/nivPhoto"
 	  android:paddingLeft="15dp"
-	  android:paddingBottom="8dp"/>
+	  android:paddingBottom="8dp"/> -->
 
 	<TextView
 	  android:id="@+id/list_meet_up_description"
@@ -72,7 +84,7 @@
 	  android:paddingLeft="4dp"
 	  android:paddingBottom="8dp"
 	  android:layout_marginLeft="10dp"
-	  android:layout_below="@+id/list_meet_up_link"
+	  android:layout_below="@+id/list_meet_up_members"
 	  android:layout_alignParentLeft="true"
 	  android:layout_alignParentStart="true"
 	  android:layout_toLeftOf="@+id/nivPhoto"

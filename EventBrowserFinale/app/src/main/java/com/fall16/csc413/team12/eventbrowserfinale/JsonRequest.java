@@ -1,6 +1,5 @@
 package com.fall16.csc413.team12.eventbrowserfinale;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
@@ -10,7 +9,6 @@ import com.android.volley.VolleyError;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 

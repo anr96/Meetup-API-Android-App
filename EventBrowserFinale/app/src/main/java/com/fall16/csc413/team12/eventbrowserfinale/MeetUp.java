@@ -18,13 +18,15 @@ import java.util.UUID;
  * */
 public class MeetUp {
 
-	private String meetUpId;
-    private String name;
-    private String link;
-    private String description;
-    private String noAttendees;
-    private String pictureURL;
+	// Variables we are currently using
+	private String groupName;
+	private String groupDescription;
+	private String numberOfGroupMembers;
+	private String groupPhotoLinkURL;
 
+	// Potential variables we may use
+	private String groupMeetUpId;
+    private String groupLink;
 
     /**
      *
@@ -63,66 +65,66 @@ public class MeetUp {
      */
     private MeetUp(JSONObject jsonObject) throws JSONException {
 
-		if(jsonObject.has("id")) this.setMeetUpId(jsonObject.getString("id"));
-        if(jsonObject.has("name")) this.setName(jsonObject.getString("name"));
-        if(jsonObject.has("link")) this.setLink(jsonObject.getString("link"));
-        if(jsonObject.has("description")) this.setDescription(jsonObject.getString("description"));
-        if(jsonObject.has("members")) this.setNoAttendees(jsonObject.getString("members"));
+		if(jsonObject.has("id")) this.setGroupMeetUpId(jsonObject.getString("id"));
+        if(jsonObject.has("name")) this.setGroupName(jsonObject.getString("name"));
+        if(jsonObject.has("link")) this.setGroupLink(jsonObject.getString("link"));
+        if(jsonObject.has("description")) this.setGroupDescription(jsonObject.getString("description"));
+        if(jsonObject.has("members")) this.setNumberOfGroupMembers(jsonObject.getString("members"));
 
 		if(jsonObject.has("organizer")) {
 			JSONObject jsonOrganizer = jsonObject.getJSONObject("organizer");
 			if(jsonOrganizer.has("photo")) {
 				JSONObject jsonPhoto = jsonOrganizer.getJSONObject("photo");
-				this.setPictureURL(jsonPhoto.getString("photo_link"));
+				this.setGroupPhotoLinkURL(jsonPhoto.getString("photo_link"));
 			}
 		}
     }
 
-    public String getName() {
-        return name;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGroupName(String name) {
+        this.groupName = name;
     }
 
-    public String getPictureURL() {
-        return pictureURL;
-    }
-
-    public void setPictureURL(String pictureURL) {
-        this.pictureURL = pictureURL;
-    }
-
-	public String getMeetUpId() {
-		return meetUpId;
+	public String getGroupDescription() {
+		return groupDescription;
 	}
 
-	public void setMeetUpId(String stringMeetUpId) {
-		meetUpId = stringMeetUpId;
+	public void setGroupDescription(String description) {
+		this.groupDescription = description;
 	}
-    public String getNoAttendees() {
-        return noAttendees;
+
+	public String getNumberOfGroupMembers() {
+		return numberOfGroupMembers;
+	}
+
+	public void setNumberOfGroupMembers(String numberOfMembers) {
+		this.numberOfGroupMembers = numberOfMembers;
+	}
+
+    public String getGroupPhotoLinkURL() {
+        return groupPhotoLinkURL;
     }
 
-    public void setNoAttendees(String noAttendees) {
-        this.noAttendees = noAttendees;
+    public void setGroupPhotoLinkURL(String pictureURL) {
+        this.groupPhotoLinkURL = pictureURL;
     }
 
-    public String getDescription() {
-        return description;
+	public String getGroupMeetUpId() {
+		return groupMeetUpId;
+	}
+
+	public void setGroupMeetUpId(String stringMeetUpId) {
+		groupMeetUpId = stringMeetUpId;
+	}
+
+    public String getGroupLink() {
+        return groupLink;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setGroupLink(String link) {
+        this.groupLink = link;
     }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
 }

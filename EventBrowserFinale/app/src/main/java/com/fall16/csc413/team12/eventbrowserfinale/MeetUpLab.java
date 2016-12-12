@@ -32,7 +32,7 @@ public class MeetUpLab {
 
      public MeetUp getMeetUp(UUID meetUpId) {
         for (MeetUp meetUp : mMeetUps) {
-            if (meetUp.getMeetUpId().equals(meetUpId)) {
+            if (meetUp.getGroupMeetUpId().equals(meetUpId)) {
             return meetUp;
             }
         }
