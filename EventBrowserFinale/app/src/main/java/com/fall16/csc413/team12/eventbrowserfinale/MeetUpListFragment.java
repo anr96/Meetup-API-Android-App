@@ -417,7 +417,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
             mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
-            mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPoster);
+            mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPhoto);
         }
 		void setName(String name) {
 			String n = "Name:\n" + name;
@@ -500,6 +500,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			holder.mNameTextView.setText(mMeetUpList.get(position).getName());
 			holder.mLink.setText(mMeetUpList.get(position).getLink());
 			holder.mDescriptionTextView.setText(mMeetUpList.get(position).getDescription());
+			holder.setPhotoUrl(mMeetUpList.get(position).getPictureURL());
 			MeetUp meetUp = mMeetUpList.get(position);
 			holder.bindStory(meetUp);
 
@@ -518,7 +519,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 				meetUpHolder.bindClickListener(listener,meetUp);
 			}
 
-			//TODO fix mLink
 			holder.mLink.setText(mMeetUpList.get(position).getName());
 			MeetUp meetUp = mMeetUpList.get(position);
 			holder.bindStory(meetUp);

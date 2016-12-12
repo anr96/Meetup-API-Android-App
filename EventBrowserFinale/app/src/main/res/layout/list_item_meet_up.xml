@@ -19,7 +19,7 @@
 				  android:elevation="4dp">
 
 	  <com.android.volley.toolbox.NetworkImageView
-		  android:id="@+id/nivPoster"
+		  android:id="@+id/nivPhoto"
 		  android:layout_width="100dp"
 		  android:layout_height="130dp"
 		  android:layout_marginEnd="20dp"
@@ -43,7 +43,7 @@
 		android:id="@+id/list_meet_up_name"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_toLeftOf="@+id/nivPoster"
+		android:layout_toLeftOf="@+id/nivPhoto"
 		android:textStyle="bold"
 		android:paddingTop="8dp"
 		tools:text="Name"
@@ -58,8 +58,8 @@
 	  android:textStyle="bold"
 	  tools:text="Link"
 	  android:layout_below="@+id/list_meet_up_name"
-	  android:layout_toLeftOf="@+id/nivPoster"
-	  android:layout_toStartOf="@+id/nivPoster"
+	  android:layout_toLeftOf="@+id/nivPhoto"
+	  android:layout_toStartOf="@+id/nivPhoto"
 	  android:paddingLeft="15dp"
 	  android:paddingBottom="8dp"/>
 
@@ -75,8 +75,8 @@
 	  android:layout_below="@+id/list_meet_up_link"
 	  android:layout_alignParentLeft="true"
 	  android:layout_alignParentStart="true"
-	  android:layout_toLeftOf="@+id/nivPoster"
-	  android:layout_toStartOf="@+id/nivPoster"
+	  android:layout_toLeftOf="@+id/nivPhoto"
+	  android:layout_toStartOf="@+id/nivPhoto"
 	  android:layout_marginRight="10dp"/>
 
   </RelativeLayout>

@@ -62,19 +62,20 @@ public class MeetUp {
      * @throws JSONException     when parser fails to parse the given JSON
      */
     private MeetUp(JSONObject jsonObject) throws JSONException {
-        if(jsonObject.has("id")) this.setMeetUpId(jsonObject.getString("id"));
+
+		if(jsonObject.has("id")) this.setMeetUpId(jsonObject.getString("id"));
         if(jsonObject.has("name")) this.setName(jsonObject.getString("name"));
         if(jsonObject.has("link")) this.setLink(jsonObject.getString("link"));
         if(jsonObject.has("description")) this.setDescription(jsonObject.getString("description"));
         if(jsonObject.has("members")) this.setNoAttendees(jsonObject.getString("members"));
 
-        /*
-        //TODO validate the logic
-        if(jsonObject.has("photo")) {
-            if(jsonObject.has("photo_link"))
-                this.setPictureURL(jsonObject.getString("photo_link"));
-        }
-        */
+		if(jsonObject.has("organizer")) {
+			JSONObject jsonOrganizer = jsonObject.getJSONObject("organizer");
+			if(jsonOrganizer.has("photo")) {
+				JSONObject jsonPhoto = jsonOrganizer.getJSONObject("photo");
+				this.setPictureURL(jsonPhoto.getString("photo_link"));
+			}
+		}
     }
 
     public String getName() {
