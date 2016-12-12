@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +57,8 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 	private static final String TAG = "MeetUpListFragment";
 	public static final String PREFS_NAME = "MyPrefsFile";
+
+	public static final int API_LEVEL = 24;
 
 	// The desired interval for location updates. Inexact. Updates may be more or less frequent.
 	public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
@@ -439,7 +444,15 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 			//TODO bind correct fields
             mNameTextView.setText(mMeetUp.getName());
-            mDescriptionTextView.setText(mMeetUp.getDescription());
+
+			// Remove HTML tags from Description String
+			if (Build.VERSION.SDK_INT >= API_LEVEL) {
+				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getDescription(),
+						Html.FROM_HTML_MODE_LEGACY));
+			} else {
+				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getDescription()));
+			}
+
             mLink.setText(mMeetUp.getLink());
 
             //mImageView.setImageResource(R.drawable.shrek);
