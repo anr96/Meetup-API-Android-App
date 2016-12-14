@@ -1,7 +1,9 @@
 package com.fall16.csc413.team12.eventbrowserfinale;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,15 +40,22 @@ public class MeetUpDetailsFragment extends Fragment {
                              Bundle savedInstanceState){
 
         ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
+        final int API_LEVEL = 24;
 
         //explicitly inflate the fragment's view
         View v = inflater.inflate(R.layout.fragment_meet_up_details, container, false);
         mNameField = (TextView) v.findViewById(R.id.meetup_name);
         mNameField.setText(mMeetUp.getGroupName());
         mDescriptionField = (TextView) v.findViewById(R.id.meetup_description);
-        mDescriptionField.setText(mMeetUp.getGroupDescription());
+        // Remove HTML tags from Description String
+        if (Build.VERSION.SDK_INT >= API_LEVEL) {
+            mDescriptionField.setText(Html.fromHtml(mMeetUp.getGroupDescription(),
+                    Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            mDescriptionField.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
+        }
         mNumberOfGroupMembersField = (TextView) v.findViewById(R.id.meetup_members);
-        mNumberOfGroupMembersField.setText(mMeetUp.getNumberOfGroupMembers());
+        mNumberOfGroupMembersField.setText("Current Members: " + mMeetUp.getNumberOfGroupMembers());
         mImageView = (NetworkImageView) v.findViewById(R.id.meetup_photo);
         mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
 

@@ -43,12 +43,12 @@ public class JsonController {
         int method = Request.Method.GET;
 
         // Url with GET parameters
-//        String url = "https://api.meetup.com/find/groups?&sign=" +
-//                "true&photo-host=public&lon=" + Longitude +
-//                "&lat=" + Latitude + "&page=10&" + "&key=" + API_KEY;
-
         String url = "https://api.meetup.com/find/groups?&sign=" +
-                "true&photo-host=public&lon=122&lat=37&page=11&" + "&key=" + API_KEY;
+                "true&photo-host=public&lon=" + Longitude +
+                "&lat=" + Latitude + "&page=10&" + "&key=" + API_KEY;
+
+//        String url = "https://api.meetup.com/find/groups?&sign=" +
+//                "true&photo-host=public&lon=122&lat=37&page=11&" + "&key=" + API_KEY;
 
         // Create new request using JsonRequest
         JsonRequest request
