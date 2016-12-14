@@ -13,13 +13,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,18 +35,15 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+
 
 /**
  * Created by AmandaNikkole on 11/27/16.
@@ -87,7 +81,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	protected Location mCurrentLocation;
 
 	public static double mLatitude;
-	private double mLongitude;
+	public static double mLongitude;
 
 	// Tracks the status of the location updates request.
 	protected Boolean mRequestingLocationUpdates = true;
@@ -123,7 +117,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mMeetUpRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
         mMeetUpRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-		mRequestingLocationUpdates = false;
 		mLastUpdateTime = "";
 
 		// Update values using data stored in the Bundle.
@@ -207,20 +200,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mAdapter.getFilter().filter(query);
 		updateUI();
 
-		/*
-		if(query.length() > 1) {
-			mController.cancelAllRequests();
-			//mController.sendRequest(query);
-			//mController.sendRequest();
-			return false;
-		} else {
-			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
-			mMeetUpRecyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText("Must provide more than one character to search");
-			return true;
-		}
-		*/
 		return true;
 	}
 
@@ -231,15 +210,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 		mAdapter.getFilter().filter(newText);
 
-		/*
-		if(newText.length() > 1) {
-			mController.cancelAllRequests();
-			mController.sendRequest(newText);
-		} else if(newText.equals("")) {
-			recyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-		}
-		*/
 		return true;
 	}
 
@@ -521,25 +491,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			MeetUp meetUp = mMeetUpList.get(position);
 			holder.bindStory(meetUp);
 
-			/*
-			MeetUp meetUp = mMeetUpList.get(position);
-
-			MeetUpHolder meetUpHolder = holder;
-			meetUpHolder.setName(meetUp.getName());
-			meetUpHolder.setLink(meetUp.getLink());
-			meetUpHolder.setDescription(meetUp.getDescription());
-			meetUpHolder.setPhotoUrl(meetUp.getPictureURL());
-			*/
-
-			/*
-			if(listener != null){
-				meetUpHolder.bindClickListener(listener,meetUp);
-			}
-
-			holder.mLink.setText(mMeetUpList.get(position).getName());
-			MeetUp meetUp = mMeetUpList.get(position);
-			holder.bindStory(meetUp);
-			*/
         }
 
         @Override
@@ -558,7 +509,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			notifyDataSetChanged();
 		}
 
-		//public void setListener(OnClickListener listener){this.listener = listener;}
+
 
 		@Override
 		public Filter getFilter() {
