@@ -72,7 +72,6 @@ public class JsonController {
                     }
                 }
         );
-
         // Add tag to request
         request.setTag(TAG);
 
