@@ -2,6 +2,8 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
+
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -12,13 +14,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +36,10 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -52,11 +50,19 @@ import java.util.List;
  * Created by AmandaNikkole on 11/27/16.
  */
 
+/*
 public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTextListener,
-		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
+		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,
+		LocationListener, ResultCallback<LocationSettingsResult> { */
+public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTextListener,
+		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,
+		LocationListener {
 
 	private static final String TAG = "MeetUpListFragment";
 	public static final String PREFS_NAME = "MyPrefsFile";
+
+	// int required to ask permission for location
+	private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 11;
 
 	public static final int API_LEVEL = 24;
 
@@ -74,11 +80,21 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	protected final static String LAST_UPDATED_TIME_STRING_KEY =
 			"last-updated-time-string-key";
 
+	public static final double DEFAULT_LATITUDE = 37.774929;
+	public static final double DEFAULT_LONGITUDE = -122.419416;
+
+	// Constant used in the location settings dialog.
+	//protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+
 	// Provides the entry point to Google Play services.
 	private GoogleApiClient mGoogleApiClient;
 
 	// Stores parameters for requests to the FusedLocationProviderApi.
 	private LocationRequest mLocationRequest;
+
+	// Stores the types of location services the client is interested in using. Used for checking
+	// settings to determine if the device has optimal location settings.
+	//protected LocationSettingsRequest mLocationSettingsRequest;
 
 	// Represents a geographical location.
 	protected Location mCurrentLocation;
@@ -92,9 +108,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	// Time when the location was updated represented as a String.
 	protected String mLastUpdateTime;
 
-	// int required to ask permission for location
-	private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
-
 	private RecyclerView mMeetUpRecyclerView;
 	private MeetUpAdapter mAdapter;
 	JsonController mController;
@@ -107,6 +120,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
+
         View view = inflater.inflate(R.layout.fragment_meet_up_list, container, false);
 
 		// Create the toolbar for this fragment
@@ -120,7 +134,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mMeetUpRecyclerView = (RecyclerView) view.findViewById(R.id.story_recycler_view);
         mMeetUpRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-		mRequestingLocationUpdates = false;
 		mLastUpdateTime = "";
 
 		// Update values using data stored in the Bundle.
@@ -128,6 +141,10 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 		// Create an instance of GoogleAPIClient.
 		buildGoogleApiClient();
+
+		//buildLocationSettingsRequest();
+
+		//checkLocationSettings();
 
 		// Required for SearchView implementation
 		setHasOptionsMenu(true);
@@ -148,9 +165,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 					public void onFailure(String errorMessage) {
 						Toast.makeText(getContext(), "Failed to retrieve data",
 								Toast.LENGTH_SHORT).show();
-						//textView.setVisibility(View.VISIBLE);
-						//textView.setText("Failed to retrieve data");
-						//Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
 					}
 				});
 
@@ -168,7 +182,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		inflater.inflate(R.menu.menu_main, menu);
 
 		MenuItem searchMenuItem = menu.findItem(R.id.search);
-		searchMenuItem.expandActionView();
+		//searchMenuItem.expandActionView();
 		MenuItemCompat.setOnActionExpandListener(searchMenuItem,
 				new MenuItemCompat.OnActionExpandListener() {
 					@Override
@@ -201,24 +215,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		Log.d(TAG, "QueryTextSubmit: " + query);
-		mAdapter.getFilter().filter(query);
-		updateUI();
-
-		/*
-		if(query.length() > 1) {
-			mController.cancelAllRequests();
-			//mController.sendRequest(query);
-			//mController.sendRequest();
-			return false;
-		} else {
-			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
-			mMeetUpRecyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText("Must provide more than one character to search");
-			return true;
-		}
-		*/
-		return true;
+		return false;
 	}
 
 	// Call filter based on single character change
@@ -228,15 +225,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 		mAdapter.getFilter().filter(newText);
 
-		/*
-		if(newText.length() > 1) {
-			mController.cancelAllRequests();
-			mController.sendRequest(newText);
-		} else if(newText.equals("")) {
-			recyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-		}
-		*/
 		return true;
 	}
 
@@ -265,6 +253,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		}
 	}
 
+
 	// Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
 	protected synchronized void buildGoogleApiClient() {
 
@@ -287,17 +276,90 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	}
 
+	/*
+	// Used for checking if a device has the needed location settings.
+	protected void buildLocationSettingsRequest() {
+		LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+		builder.addLocationRequest(mLocationRequest);
+		mLocationSettingsRequest = builder.build();
+	}
+	*/
+
+	/*
+	// Check if the device's location settings are adequate for the app's needs
+	protected void checkLocationSettings() {
+		PendingResult<LocationSettingsResult> result =
+				LocationServices.SettingsApi.checkLocationSettings(
+						mGoogleApiClient,
+						mLocationSettingsRequest
+				);
+		result.setResultCallback(this);
+	}
+	*/
+
+	/*
+	// Determines if location settings are adequate. If they are not, begins the process of
+	// presenting a location settings dialog to the user.
+	@Override
+	public void onResult(LocationSettingsResult locationSettingsResult) {
+		final Status status = locationSettingsResult.getStatus();
+		switch (status.getStatusCode()) {
+			case LocationSettingsStatusCodes.SUCCESS:
+				Log.i(TAG, "All location settings are satisfied.");
+				startLocationUpdates();
+				break;
+			case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+				Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
+						"upgrade location settings ");
+
+				try {
+					// Show the dialog by calling startResolutionForResult(), and check the result
+					// in onActivityResult().
+					status.startResolutionForResult(MeetUpListActivity.this,
+							REQUEST_CHECK_SETTINGS);
+				} catch (IntentSender.SendIntentException e) {
+					Log.i(TAG, "PendingIntent unable to execute request.");
+				}
+				break;
+			case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+				Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
+						"not created.");
+				break;
+		}
+	}
+	*/
+
+	/*
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			// Check for the integer request code originally supplied to startResolutionForResult().
+			case REQUEST_CHECK_SETTINGS:
+				switch (resultCode) {
+					case Activity.RESULT_OK:
+						Log.i(TAG, "User agreed to make required location settings changes.");
+						startLocationUpdates();
+						break;
+					case Activity.RESULT_CANCELED:
+						Log.i(TAG, "User chose not to make required location settings changes.");
+						break;
+				}
+				break;
+		}
+	}
+	*/
+
 	// Requests location updates from the FusedLocationApi.
 	protected void startLocationUpdates() {
 
 		// Check for location permissions
 		if (ContextCompat.checkSelfPermission(App.getContext(),
-				android.Manifest.permission.ACCESS_COARSE_LOCATION )
+				android.Manifest.permission.ACCESS_FINE_LOCATION )
 				!= PackageManager.PERMISSION_GRANTED ) {
 
 			ActivityCompat.requestPermissions(getActivity(), new String[] {
-							android.Manifest.permission.ACCESS_COARSE_LOCATION },
-					MY_PERMISSION_ACCESS_COARSE_LOCATION);
+							android.Manifest.permission.ACCESS_FINE_LOCATION },
+					MY_PERMISSION_ACCESS_FINE_LOCATION);
 		}
 
 		LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -319,6 +381,24 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mGoogleApiClient.connect();
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+			startLocationUpdates();
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		// Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
+		if (mGoogleApiClient.isConnected()) {
+			stopLocationUpdates();
+		}
+	}
+
 	public void onStop() {
 		super.onStop();
 		if (mGoogleApiClient.isConnected()) {
@@ -333,35 +413,112 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 		// Check for location permissions
 		if (ContextCompat.checkSelfPermission(App.getContext(),
-				android.Manifest.permission.ACCESS_COARSE_LOCATION )
+				android.Manifest.permission.ACCESS_FINE_LOCATION )
 				!= PackageManager.PERMISSION_GRANTED ) {
 
 			ActivityCompat.requestPermissions(getActivity(), new String[] {
-					android.Manifest.permission.ACCESS_COARSE_LOCATION },
-					MY_PERMISSION_ACCESS_COARSE_LOCATION);
+							android.Manifest.permission.ACCESS_FINE_LOCATION },
+					MY_PERMISSION_ACCESS_FINE_LOCATION);
 		}
-
-		if (mCurrentLocation == null) {
+		else {
 			mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-			mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+			//if (mCurrentLocation == null) {
+			if (mCurrentLocation != null) {
+				Log.i(TAG, "mCurrentLocation was not null");
+				mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-			mLatitude = mCurrentLocation.getLatitude();
-			Log.i(TAG, "Latitude is: " + mLatitude);
-			mLongitude = mCurrentLocation.getLongitude();
-			Log.i(TAG, "Longitude is: " + mLongitude);
+				mLatitude = mCurrentLocation.getLatitude();
+				Log.i(TAG, "Latitude is: " + mLatitude);
+				mLongitude = mCurrentLocation.getLongitude();
+				Log.i(TAG, "Longitude is: " + mLongitude);
 
-			// We need an Editor object to make preference changes.
-			// All objects are from android.context.Context
-			SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putString("Latitude", String.valueOf(mLatitude));
-			editor.putString("Longitude", String.valueOf(mLongitude));
-			// Commit the edits!
-			editor.commit();
+				// We need an Editor object to make preference changes.
+				// All objects are from android.context.Context
+				SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString("Latitude", String.valueOf(mLatitude));
+				editor.putString("Longitude", String.valueOf(mLongitude));
+				// Commit the edits!
+				editor.apply();
+			}
+			else {
+				Log.i(TAG, "mCurrentLocation was null");
+
+				mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+				mLatitude = DEFAULT_LATITUDE;
+				Log.i(TAG, "Latitude is: " + mLatitude);
+				mLongitude = DEFAULT_LONGITUDE;
+				Log.i(TAG, "Longitude is: " + mLongitude);
+
+				// We need an Editor object to make preference changes.
+				// All objects are from android.context.Context
+				SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString("Latitude", String.valueOf(mLatitude));
+				editor.putString("Longitude", String.valueOf(mLongitude));
+				// Commit the edits!
+				editor.apply();
+			}
 		}
 
-		if (mRequestingLocationUpdates) {
-			startLocationUpdates();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions,
+										   int[] grantResults) {
+		switch (requestCode) {
+			case MY_PERMISSION_ACCESS_FINE_LOCATION:
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.
+						PERMISSION_GRANTED) {
+					//continueYourTask
+					if (ContextCompat.checkSelfPermission(App.getContext(),
+							android.Manifest.permission.ACCESS_FINE_LOCATION )
+							!= PackageManager.PERMISSION_GRANTED ) {
+						mCurrentLocation = LocationServices.FusedLocationApi.
+								getLastLocation(mGoogleApiClient);
+					}
+					if (mCurrentLocation != null) {
+						Log.i(TAG, "Permissions Requested. mCurrentLocation was not null");
+						mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+						mLatitude = mCurrentLocation.getLatitude();
+						Log.i(TAG, "Latitude is: " + mLatitude);
+						mLongitude = mCurrentLocation.getLongitude();
+						Log.i(TAG, "Longitude is: " + mLongitude);
+
+						// We need an Editor object to make preference changes.
+						// All objects are from android.context.Context
+						SharedPreferences settings = App.getContext().getSharedPreferences
+								(PREFS_NAME, 0);
+						SharedPreferences.Editor editor = settings.edit();
+						editor.putString("Latitude", String.valueOf(mLatitude));
+						editor.putString("Longitude", String.valueOf(mLongitude));
+						// Commit the edits!
+						editor.apply();
+					}
+					else {
+						Log.i(TAG, "Permissions Requests. mCurrentLocation was null");
+
+						mLatitude = DEFAULT_LATITUDE;
+						Log.i(TAG, "Latitude is: " + mLatitude);
+						mLongitude = DEFAULT_LONGITUDE;
+						Log.i(TAG, "Longitude is: " + mLongitude);
+
+						// We need an Editor object to make preference changes.
+						// All objects are from android.context.Context
+						SharedPreferences settings = App.getContext().getSharedPreferences
+								(PREFS_NAME, 0);
+						SharedPreferences.Editor editor = settings.edit();
+						editor.putString("Latitude", String.valueOf(mLatitude));
+						editor.putString("Longitude", String.valueOf(mLongitude));
+						// Commit the edits!
+						editor.apply();
+					}
+				}
+				break;
+			default:
+				super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 	}
 
@@ -406,9 +563,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		private TextView mNumberMembersTextView;
         private TextView mDescriptionTextView;
 		private NetworkImageView mImageView;
-
-		// Optional textviews for now
-        private TextView mLink;
+        private TextView mLinkTextView;
 
 
         private MeetUp mMeetUp;
@@ -418,7 +573,9 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             itemView.setOnClickListener(this);
 
 			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
-            //mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+            mLinkTextView = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+			mLinkTextView.setClickable(true);
+
 			mNumberMembersTextView = (TextView) itemView.findViewById(R.id.list_meet_up_members);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
             mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPhoto);
@@ -429,20 +586,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			mNameTextView.setText(n);
 		}
 
-		void setNumberMembers(String nummembers) {
-			String n = "Members:\n" + nummembers;
-		}
-
-		void setLink(String link) {
-			String n = "Link:\n" + link;
-			mLink.setText(n);
-		}
-
-		void setDescription(String description) {
-			String n = "Description:\n" + description;
-			mDescriptionTextView.setText(n);
-		}
-
 		void setPhotoUrl(String photoUrl){
 			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
 			mImageView.setImageUrl(photoUrl, imageLoader);
@@ -450,9 +593,10 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
         public void bindStory(MeetUp meetUp){
             mMeetUp = meetUp;
+			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
 
-			//TODO bind correct fields
             mNameTextView.setText(mMeetUp.getGroupName());
+			mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
 
 			// Remove HTML tags from Description String
 			if (Build.VERSION.SDK_INT >= API_LEVEL) {
@@ -462,20 +606,23 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
 			}
 
-            //mLink.setText(mMeetUp.getLink());
+			mLinkTextView.setClickable(true);
+			mLinkTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
-			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
-
-            //mImageView.setImageResource(R.drawable.shrek);
+			if (Build.VERSION.SDK_INT >= API_LEVEL) {
+				mLinkTextView.setText(Html.fromHtml(mMeetUp.getGroupVisitSiteLink(),
+						Html.FROM_HTML_MODE_LEGACY));
+			}
+			else {
+				mLinkTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
+			}
         }
 
         @Override
         public void onClick(View v){
-			//TODO so that when event is clicked, the second activity pops up the correct info
-			//should meetUpId be a UUID?
-//
-//            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getMeetUpId());
-//			startActivity(intent);
+            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(),
+					mMeetUp.getGroupMeetUpId());
+			startActivity(intent);
 
         }
     }
@@ -509,7 +656,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         public void onBindViewHolder(MeetUpHolder holder, int position){
 
 			holder.mNameTextView.setText(mMeetUpList.get(position).getGroupName());
-			//holder.mLink.setText(mMeetUpList.get(position).getLink());
 			holder.mDescriptionTextView.setText(mMeetUpList.get(position).getGroupDescription());
 			holder.setPhotoUrl(mMeetUpList.get(position).getGroupPhotoLinkURL());
 			holder.mNumberMembersTextView.setText(mMeetUpList.get(position).
@@ -517,25 +663,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			MeetUp meetUp = mMeetUpList.get(position);
 			holder.bindStory(meetUp);
 
-			/*
-			MeetUp meetUp = mMeetUpList.get(position);
-
-			MeetUpHolder meetUpHolder = holder;
-			meetUpHolder.setName(meetUp.getName());
-			meetUpHolder.setLink(meetUp.getLink());
-			meetUpHolder.setDescription(meetUp.getDescription());
-			meetUpHolder.setPhotoUrl(meetUp.getPictureURL());
-			*/
-
-			/*
-			if(listener != null){
-				meetUpHolder.bindClickListener(listener,meetUp);
-			}
-
-			holder.mLink.setText(mMeetUpList.get(position).getName());
-			MeetUp meetUp = mMeetUpList.get(position);
-			holder.bindStory(meetUp);
-			*/
         }
 
         @Override
@@ -553,8 +680,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			this.mMeetUpList.addAll(modelList);
 			notifyDataSetChanged();
 		}
-
-		//public void setListener(OnClickListener listener){this.listener = listener;}
 
 		@Override
 		public Filter getFilter() {

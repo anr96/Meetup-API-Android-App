@@ -7,15 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 
 // AppCompatActivity includes FragmentActivity extension
-public abstract class SingleFragmentActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public abstract class SingleFragmentActivity extends AppCompatActivity implements
+		SearchView.OnQueryTextListener {
 
+	private static final String TAG = "SingleFragmentActivity";
 
     protected abstract Fragment createFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_meet_up_details);
+
+		setContentView(R.layout.activity_meet_up_details);
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
