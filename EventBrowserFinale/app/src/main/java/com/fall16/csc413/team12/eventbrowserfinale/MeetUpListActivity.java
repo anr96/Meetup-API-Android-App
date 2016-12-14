@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 
 public class MeetUpListActivity extends SingleFragmentActivity {
 
+	private static final String TAG = "MeetUpListActivity";
+
 	@Override
     protected Fragment createFragment() {
         return new MeetUpListFragment();

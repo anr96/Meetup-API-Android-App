@@ -18,15 +18,13 @@ import java.util.UUID;
  * */
 public class MeetUp {
 
-	// Variables we are currently using
 	private String groupName;
 	private String groupDescription;
 	private String numberOfGroupMembers;
 	private String groupPhotoLinkURL;
-
-	// Potential variables we may use
 	private String groupMeetUpId;
     private String groupLink;
+	private String groupVisitSiteLink;
 
     /**
      *
@@ -125,4 +123,13 @@ public class MeetUp {
     public void setGroupLink(String link) {
         this.groupLink = link;
     }
+
+	public String getGroupVisitSiteLink() {
+		return groupVisitSiteLink;
+	}
+
+	public void setGroupVisitSiteLink(String groupVisitSiteLink) {
+		groupVisitSiteLink = "<a href=" + this.getGroupLink() + ">Visit the Website</a>";
+		this.groupVisitSiteLink = groupVisitSiteLink;
+	}
 }

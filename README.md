@@ -1,6 +1,5 @@
 #Project-2 Story Finder Finale
 #### Team Number 12
-
 #### Team Members: Amanda Robinson, Walter Galan, Alex Bautista
 #### Youtube video Link
 TODO - Add your team's unlisted youtube video link here.
