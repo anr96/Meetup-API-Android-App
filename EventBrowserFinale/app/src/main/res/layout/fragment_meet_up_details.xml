@@ -5,8 +5,8 @@
               android:orientation="vertical"
     >
 
-    <ImageView
-        android:id="@+id/story_card"
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/meetup_photo"
         android:src="@drawable/card"
         android:layout_gravity="center"
         android:layout_width="320dp"
@@ -25,17 +25,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView android:id="@+id/story_description"
+            <TextView android:id="@+id/meetup_description"
 					  android:paddingLeft="20dp"
 					  android:paddingRight="20dp"
-					  android:layout_below="@+id/story_name"
+					  android:layout_below="@+id/meetup_members"
 					  android:layout_width="wrap_content"
 					  android:layout_height="wrap_content"
 					  android:textSize="14dp"
 					  android:hint="@string/story_description_hint"
 					  android:gravity="center_horizontal|fill_horizontal"/>
 
-            <TextView android:id="@+id/story_name"
+            <TextView android:id="@+id/meetup_name"
 					  android:padding="8dp"
 					  android:layout_width="match_parent"
 					  android:layout_height="wrap_content"
@@ -43,6 +43,14 @@
 					  android:textSize="16dp"
 					  android:hint="@string/story_title_hint"
 					  android:gravity="center_horizontal"/>
+
+			<TextView android:id="@+id/meetup_members"
+					  android:padding="8dp"
+					  android:layout_width="match_parent"
+					  android:layout_height="wrap_content"
+					  android:layout_below="@+id/meetup_name"
+					  android:textSize="14dp"
+					  android:hint="@string/meetup_members_hint"/>
 
 
         </RelativeLayout>

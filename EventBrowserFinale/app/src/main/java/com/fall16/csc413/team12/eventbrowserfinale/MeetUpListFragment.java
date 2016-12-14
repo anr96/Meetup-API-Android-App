@@ -2,6 +2,7 @@ package com.fall16.csc413.team12.eventbrowserfinale;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -47,6 +48,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by AmandaNikkole on 11/27/16.
@@ -450,9 +452,14 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
         public void bindStory(MeetUp meetUp){
             mMeetUp = meetUp;
-
+			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
 			//TODO bind correct fields
             mNameTextView.setText(mMeetUp.getGroupName());
+			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
+
+			mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
+
+
 
 			// Remove HTML tags from Description String
 			if (Build.VERSION.SDK_INT >= API_LEVEL) {
@@ -464,8 +471,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
             //mLink.setText(mMeetUp.getLink());
 
-			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
-
             //mImageView.setImageResource(R.drawable.shrek);
         }
 
@@ -473,9 +478,9 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         public void onClick(View v){
 			//TODO so that when event is clicked, the second activity pops up the correct info
 			//should meetUpId be a UUID?
-//
-//            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getMeetUpId());
-//			startActivity(intent);
+
+            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getGroupMeetUpId());
+			startActivity(intent);
 
         }
     }

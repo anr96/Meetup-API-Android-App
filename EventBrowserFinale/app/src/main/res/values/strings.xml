@@ -18,5 +18,6 @@
 	 <string name="no_location_detected">
         No location detected. Make sure location is enabled on the device.
     </string>
+	<string name="meetup_members_hint">Number of Members</string>
 
 </resources>

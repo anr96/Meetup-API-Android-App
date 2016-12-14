@@ -30,7 +30,7 @@ public class MeetUpLab {
 
      public List<MeetUp> getMeetUps() {return mMeetUps;}
 
-     public MeetUp getMeetUp(UUID meetUpId) {
+     public MeetUp getMeetUp(String meetUpId) {
         for (MeetUp meetUp : mMeetUps) {
             if (meetUp.getGroupMeetUpId().equals(meetUpId)) {
             return meetUp;

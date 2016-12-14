@@ -10,9 +10,9 @@ public class MeetUpDetailsActivity extends SingleFragmentActivity {
 
 	public static final String EVENTBROSWER_MEET_UP_ID = "eventbroswer.meet_up_id";
 
-	public static Intent newIntent(Context packageContext, UUID storyId) {
+	public static Intent newIntent(Context packageContext, String id) {
 		Intent intent = new Intent(packageContext, MeetUpDetailsActivity.class);
-		intent.putExtra(EVENTBROSWER_MEET_UP_ID, storyId);
+		intent.putExtra(EVENTBROSWER_MEET_UP_ID, id);
 		return intent;
 	}
 
