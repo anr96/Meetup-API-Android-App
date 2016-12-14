@@ -48,6 +48,7 @@ public class MeetUpDetailsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_meet_up_details, container, false);
         mNameField = (TextView) v.findViewById(R.id.meetup_name);
         mNameField.setText(mMeetUp.getGroupName());
+
         mDescriptionField = (TextView) v.findViewById(R.id.meetup_description);
 
         // Remove HTML tags from Description String

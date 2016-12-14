@@ -1,11 +1,14 @@
 package com.fall16.csc413.team12.eventbrowserfinale;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+//import com.android.volley.toolbox.JsonRequest;
+import com.fall16.csc413.team12.eventbrowserfinale.JsonRequest;
 
 import java.util.List;
 
@@ -25,9 +28,7 @@ public class JsonController {
 
 	SharedPreferences settings = App.getContext().getSharedPreferences(PREFS_NAME, 0);
 	private String Latitude = settings.getString("Latitude", "");
-	//private float Lat = Float.parseFloat(Latitude);
 	private String Longitude = settings.getString("Longitude", "");
-	//private float Long = Float.parseFloat(Longitude);
 
     private OnResponseListener responseListener;
 
@@ -41,15 +42,16 @@ public class JsonController {
         // Request Method
         int method = Request.Method.GET;
 
-		if (Latitude.length() == 0 && Longitude.length() == 0) {
-			Latitude = "37.774929";
-			Longitude = "-122.419416";
-		}
+        if (Latitude.length() == 0 && Longitude.length() == 0) {
+            Latitude = "37.774929";
+            Longitude = "-122.419416";
+        }
 
         // Url with GET parameters
         String url = "https://api.meetup.com/find/groups?&sign=" +
                 "true&photo-host=public&lon=" + Longitude +
-                "&lat=" + Latitude + "&page=20&" + "&key=" + API_KEY;
+                "&lat=" + Latitude + "&page=25&" + "&key=" + API_KEY;
+
 
         // Create new request using JsonRequest
         JsonRequest request
@@ -70,7 +72,6 @@ public class JsonController {
                     }
                 }
         );
-
         // Add tag to request
         request.setTag(TAG);
 

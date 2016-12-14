@@ -98,9 +98,7 @@ public class MeetUp {
 		return numberOfGroupMembers;
 	}
 
-	public void setNumberOfGroupMembers(String numberOfMembers) {
-		this.numberOfGroupMembers = numberOfMembers;
-	}
+	public void setNumberOfGroupMembers(String numberOfMembers) {this.numberOfGroupMembers = numberOfMembers;}
 
     public String getGroupPhotoLinkURL() {
         return groupPhotoLinkURL;
