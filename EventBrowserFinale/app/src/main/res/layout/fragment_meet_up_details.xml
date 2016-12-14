@@ -62,10 +62,20 @@
 					  android:textSize="14dp"
 					  android:hint="@string/meetup_members_hint"/>
 
+				<TextView android:id="@+id/meetup_link"
+						  android:paddingLeft="20dp"
+						  android:paddingRight="20dp"
+						  android:paddingBottom="10dp"
+						  android:layout_width="match_parent"
+						  android:layout_height="wrap_content"
+						  android:layout_below="@+id/meetup_members"
+						  android:textSize="14dp"
+						  android:hint="@string/meetup_link_hint"/>
+
             	<TextView android:id="@+id/meetup_description"
 					  android:paddingLeft="20dp"
 					  android:paddingRight="20dp"
-					  android:layout_below="@+id/meetup_members"
+					  android:layout_below="@+id/meetup_link"
 					  android:layout_width="wrap_content"
 					  android:layout_height="wrap_content"
 					  android:textSize="14dp"

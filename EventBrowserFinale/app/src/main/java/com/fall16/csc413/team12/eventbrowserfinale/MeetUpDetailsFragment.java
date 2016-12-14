@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class MeetUpDetailsFragment extends Fragment {
     private TextView mNameField;
     private TextView mDescriptionField;
 	private TextView mNumberOfGroupMembersField;
+    private TextView mLinkField;
     private NetworkImageView mImageView;
 
     @Override
@@ -58,6 +60,18 @@ public class MeetUpDetailsFragment extends Fragment {
         mNumberOfGroupMembersField.setText("Current Members: " + mMeetUp.getNumberOfGroupMembers());
         mImageView = (NetworkImageView) v.findViewById(R.id.meetup_photo);
         mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
+        mLinkField = (TextView) v.findViewById(R.id.meetup_link);
+        mLinkField.setClickable(true);
+        mLinkField.setMovementMethod(LinkMovementMethod.getInstance());
+        String text = "<a href=" + mMeetUp.getGroupLink() + "> Visit the Website</a>";
+        mLinkField.setText(Html.fromHtml(text));
+
+
+//        mLink.setText(mMeetUp.getGroupLink());
+//        mLink.setClickable(true);
+//        mLink.setMovementMethod(LinkMovementMethod.getInstance());
+//        String text = "<a href=" + mMeetUp.getGroupLink() + "> Website</a>";
+//        mLink.setText(Html.fromHtml(text));
 
         return v;
     }

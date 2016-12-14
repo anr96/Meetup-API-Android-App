@@ -20,6 +20,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -420,7 +421,9 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             itemView.setOnClickListener(this);
 
 			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
-            //mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+            mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+			mLink.setClickable(true);
+
 			mNumberMembersTextView = (TextView) itemView.findViewById(R.id.list_meet_up_members);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
             mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPhoto);
@@ -453,13 +456,10 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         public void bindStory(MeetUp meetUp){
             mMeetUp = meetUp;
 			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
-			//TODO bind correct fields
+
             mNameTextView.setText(mMeetUp.getGroupName());
-			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
-
+			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers() + " Members");
 			mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
-
-
 
 			// Remove HTML tags from Description String
 			if (Build.VERSION.SDK_INT >= API_LEVEL) {
@@ -469,16 +469,15 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
 			}
 
-            //mLink.setText(mMeetUp.getLink());
+			mLink.setClickable(true);
+			mLink.setMovementMethod(LinkMovementMethod.getInstance());
+			String text = "<a href=" + mMeetUp.getGroupLink() + ">Visit the Website</a>";
+			mLink.setText(Html.fromHtml(text));
 
-            //mImageView.setImageResource(R.drawable.shrek);
         }
 
         @Override
         public void onClick(View v){
-			//TODO so that when event is clicked, the second activity pops up the correct info
-			//should meetUpId be a UUID?
-
             Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getGroupMeetUpId());
 			startActivity(intent);
 
