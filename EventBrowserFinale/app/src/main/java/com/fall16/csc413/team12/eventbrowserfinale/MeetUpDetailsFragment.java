@@ -32,7 +32,7 @@ public class MeetUpDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         String meetUpId = (String) getActivity().getIntent()
-                .getSerializableExtra(MeetUpDetailsActivity.EVENTBROSWER_MEET_UP_ID);
+                .getSerializableExtra(MeetUpDetailsActivity.EVENTBROWSER_MEET_UP_ID);
         mMeetUp = MeetUpLab.get(getActivity()).getMeetUp(meetUpId);
 
     }
@@ -44,11 +44,12 @@ public class MeetUpDetailsFragment extends Fragment {
         ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
         final int API_LEVEL = 24;
 
-        //explicitly inflate the fragment's view
+        // Explicitly inflate the fragment's view
         View v = inflater.inflate(R.layout.fragment_meet_up_details, container, false);
         mNameField = (TextView) v.findViewById(R.id.meetup_name);
         mNameField.setText(mMeetUp.getGroupName());
         mDescriptionField = (TextView) v.findViewById(R.id.meetup_description);
+
         // Remove HTML tags from Description String
         if (Build.VERSION.SDK_INT >= API_LEVEL) {
             mDescriptionField.setText(Html.fromHtml(mMeetUp.getGroupDescription(),
@@ -56,22 +57,19 @@ public class MeetUpDetailsFragment extends Fragment {
         } else {
             mDescriptionField.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
         }
+
         mNumberOfGroupMembersField = (TextView) v.findViewById(R.id.meetup_members);
         mNumberOfGroupMembersField.setText("Current Members: " + mMeetUp.getNumberOfGroupMembers());
+
         mImageView = (NetworkImageView) v.findViewById(R.id.meetup_photo);
         mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
+
         mLinkField = (TextView) v.findViewById(R.id.meetup_link);
         mLinkField.setClickable(true);
         mLinkField.setMovementMethod(LinkMovementMethod.getInstance());
+
         String text = "<a href=" + mMeetUp.getGroupLink() + "> Visit the Website</a>";
         mLinkField.setText(Html.fromHtml(text));
-
-
-//        mLink.setText(mMeetUp.getGroupLink());
-//        mLink.setClickable(true);
-//        mLink.setMovementMethod(LinkMovementMethod.getInstance());
-//        String text = "<a href=" + mMeetUp.getGroupLink() + "> Website</a>";
-//        mLink.setText(Html.fromHtml(text));
 
         return v;
     }

@@ -1,13 +1,9 @@
 package com.fall16.csc413.team12.eventbrowserfinale;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-<<<<<<< HEAD
-import android.content.IntentSender;
-=======
->>>>>>> origin/master
+
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,13 +14,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,21 +36,15 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by AmandaNikkole on 11/27/16.
@@ -93,6 +80,9 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	protected final static String LAST_UPDATED_TIME_STRING_KEY =
 			"last-updated-time-string-key";
 
+	public static final double DEFAULT_LATITUDE = 37.774929;
+	public static final double DEFAULT_LONGITUDE = -122.419416;
+
 	// Constant used in the location settings dialog.
 	//protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
@@ -104,7 +94,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
 	// Stores the types of location services the client is interested in using. Used for checking
 	// settings to determine if the device has optimal location settings.
-	protected LocationSettingsRequest mLocationSettingsRequest;
+	//protected LocationSettingsRequest mLocationSettingsRequest;
 
 	// Represents a geographical location.
 	protected Location mCurrentLocation;
@@ -192,7 +182,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		inflater.inflate(R.menu.menu_main, menu);
 
 		MenuItem searchMenuItem = menu.findItem(R.id.search);
-		searchMenuItem.expandActionView();
+		//searchMenuItem.expandActionView();
 		MenuItemCompat.setOnActionExpandListener(searchMenuItem,
 				new MenuItemCompat.OnActionExpandListener() {
 					@Override
@@ -225,24 +215,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 	@Override
 	public boolean onQueryTextSubmit(String query) {
 		Log.d(TAG, "QueryTextSubmit: " + query);
-		mAdapter.getFilter().filter(query);
-		updateUI();
-
-		/*
-		if(query.length() > 1) {
-			mController.cancelAllRequests();
-			//mController.sendRequest(query);
-			//mController.sendRequest();
-			return false;
-		} else {
-			Toast.makeText(MainActivity.this, "Must provide more than one character", Toast.LENGTH_SHORT).show();
-			mMeetUpRecyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText("Must provide more than one character to search");
-			return true;
-		}
-		*/
-		return true;
+		return false;
 	}
 
 	// Call filter based on single character change
@@ -252,15 +225,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mMeetUpRecyclerView.setVisibility(View.VISIBLE);
 		mAdapter.getFilter().filter(newText);
 
-		/*
-		if(newText.length() > 1) {
-			mController.cancelAllRequests();
-			mController.sendRequest(newText);
-		} else if(newText.equals("")) {
-			recyclerView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
-		}
-		*/
 		return true;
 	}
 
@@ -417,6 +381,24 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		mGoogleApiClient.connect();
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+			startLocationUpdates();
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		// Stop location updates to save battery, but don't disconnect the GoogleApiClient object.
+		if (mGoogleApiClient.isConnected()) {
+			stopLocationUpdates();
+		}
+	}
+
 	public void onStop() {
 		super.onStop();
 		if (mGoogleApiClient.isConnected()) {
@@ -461,14 +443,12 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			}
 			else {
 				Log.i(TAG, "mCurrentLocation was null");
-				startLocationUpdates();
-				mCurrentLocation = LocationServices.FusedLocationApi.
-						getLastLocation(mGoogleApiClient);
+
 				mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-				mLatitude = mCurrentLocation.getLatitude();
+				mLatitude = DEFAULT_LATITUDE;
 				Log.i(TAG, "Latitude is: " + mLatitude);
-				mLongitude = mCurrentLocation.getLongitude();
+				mLongitude = DEFAULT_LONGITUDE;
 				Log.i(TAG, "Longitude is: " + mLongitude);
 
 				// We need an Editor object to make preference changes.
@@ -519,14 +499,10 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 					}
 					else {
 						Log.i(TAG, "Permissions Requests. mCurrentLocation was null");
-						startLocationUpdates();
-						mCurrentLocation = LocationServices.FusedLocationApi.
-								getLastLocation(mGoogleApiClient);
-						mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-						mLatitude = mCurrentLocation.getLatitude();
+						mLatitude = DEFAULT_LATITUDE;
 						Log.i(TAG, "Latitude is: " + mLatitude);
-						mLongitude = mCurrentLocation.getLongitude();
+						mLongitude = DEFAULT_LONGITUDE;
 						Log.i(TAG, "Longitude is: " + mLongitude);
 
 						// We need an Editor object to make preference changes.
@@ -587,9 +563,7 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		private TextView mNumberMembersTextView;
         private TextView mDescriptionTextView;
 		private NetworkImageView mImageView;
-
-		// Optional textviews for now
-        private TextView mLink;
+        private TextView mLinkTextView;
 
 
         private MeetUp mMeetUp;
@@ -599,8 +573,8 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             itemView.setOnClickListener(this);
 
 			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
-            mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
-			mLink.setClickable(true);
+            mLinkTextView = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+			mLinkTextView.setClickable(true);
 
 			mNumberMembersTextView = (TextView) itemView.findViewById(R.id.list_meet_up_members);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
@@ -610,20 +584,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 		void setName(String name) {
 			String n = "Name:\n" + name;
 			mNameTextView.setText(n);
-		}
-
-		void setNumberMembers(String nummembers) {
-			String n = "Members:\n" + nummembers;
-		}
-
-		void setLink(String link) {
-			String n = "Link:\n" + link;
-			mLink.setText(n);
-		}
-
-		void setDescription(String description) {
-			String n = "Description:\n" + description;
-			mDescriptionTextView.setText(n);
 		}
 
 		void setPhotoUrl(String photoUrl){
@@ -636,7 +596,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
 
             mNameTextView.setText(mMeetUp.getGroupName());
-			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers() + " Members");
 			mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
 
 			// Remove HTML tags from Description String
@@ -647,22 +606,22 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
 			}
 
-<<<<<<< HEAD
-            //mLink.setText(mMeetUp.getLink());
+			mLinkTextView.setClickable(true);
+			mLinkTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
-			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
-=======
-			mLink.setClickable(true);
-			mLink.setMovementMethod(LinkMovementMethod.getInstance());
-			String text = "<a href=" + mMeetUp.getGroupLink() + ">Visit the Website</a>";
-			mLink.setText(Html.fromHtml(text));
-
->>>>>>> origin/master
+			if (Build.VERSION.SDK_INT >= API_LEVEL) {
+				mLinkTextView.setText(Html.fromHtml(mMeetUp.getGroupVisitSiteLink(),
+						Html.FROM_HTML_MODE_LEGACY));
+			}
+			else {
+				mLinkTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
+			}
         }
 
         @Override
         public void onClick(View v){
-            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getGroupMeetUpId());
+            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(),
+					mMeetUp.getGroupMeetUpId());
 			startActivity(intent);
 
         }
@@ -697,7 +656,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
         public void onBindViewHolder(MeetUpHolder holder, int position){
 
 			holder.mNameTextView.setText(mMeetUpList.get(position).getGroupName());
-			//holder.mLink.setText(mMeetUpList.get(position).getLink());
 			holder.mDescriptionTextView.setText(mMeetUpList.get(position).getGroupDescription());
 			holder.setPhotoUrl(mMeetUpList.get(position).getGroupPhotoLinkURL());
 			holder.mNumberMembersTextView.setText(mMeetUpList.get(position).
@@ -705,25 +663,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			MeetUp meetUp = mMeetUpList.get(position);
 			holder.bindStory(meetUp);
 
-			/*
-			MeetUp meetUp = mMeetUpList.get(position);
-
-			MeetUpHolder meetUpHolder = holder;
-			meetUpHolder.setName(meetUp.getName());
-			meetUpHolder.setLink(meetUp.getLink());
-			meetUpHolder.setDescription(meetUp.getDescription());
-			meetUpHolder.setPhotoUrl(meetUp.getPictureURL());
-			*/
-
-			/*
-			if(listener != null){
-				meetUpHolder.bindClickListener(listener,meetUp);
-			}
-
-			holder.mLink.setText(mMeetUpList.get(position).getName());
-			MeetUp meetUp = mMeetUpList.get(position);
-			holder.bindStory(meetUp);
-			*/
         }
 
         @Override
@@ -741,8 +680,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 			this.mMeetUpList.addAll(modelList);
 			notifyDataSetChanged();
 		}
-
-		//public void setListener(OnClickListener listener){this.listener = listener;}
 
 		@Override
 		public Filter getFilter() {
