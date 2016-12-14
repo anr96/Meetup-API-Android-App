@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.content.IntentSender;
+=======
+>>>>>>> origin/master
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -22,6 +25,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,6 +57,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by AmandaNikkole on 11/27/16.
@@ -594,7 +599,9 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
             itemView.setOnClickListener(this);
 
 			mNameTextView = (TextView) itemView.findViewById(R.id.list_meet_up_name);
-            //mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+            mLink = (TextView) itemView.findViewById(R.id.list_meet_up_link);
+			mLink.setClickable(true);
+
 			mNumberMembersTextView = (TextView) itemView.findViewById(R.id.list_meet_up_members);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.list_meet_up_description);
             mImageView = (NetworkImageView) itemView.findViewById(R.id.nivPhoto);
@@ -626,9 +633,11 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 
         public void bindStory(MeetUp meetUp){
             mMeetUp = meetUp;
+			ImageLoader imageLoader = VolleySingleton.getInstance(App.getContext()).getImageLoader();
 
-			//TODO bind correct fields
             mNameTextView.setText(mMeetUp.getGroupName());
+			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers() + " Members");
+			mImageView.setImageUrl(mMeetUp.getGroupPhotoLinkURL(), imageLoader);
 
 			// Remove HTML tags from Description String
 			if (Build.VERSION.SDK_INT >= API_LEVEL) {
@@ -638,18 +647,23 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 				mDescriptionTextView.setText(Html.fromHtml(mMeetUp.getGroupDescription()));
 			}
 
+<<<<<<< HEAD
             //mLink.setText(mMeetUp.getLink());
 
 			mNumberMembersTextView.setText(mMeetUp.getNumberOfGroupMembers());
+=======
+			mLink.setClickable(true);
+			mLink.setMovementMethod(LinkMovementMethod.getInstance());
+			String text = "<a href=" + mMeetUp.getGroupLink() + ">Visit the Website</a>";
+			mLink.setText(Html.fromHtml(text));
+
+>>>>>>> origin/master
         }
 
         @Override
         public void onClick(View v){
-			//TODO so that when event is clicked, the second activity pops up the correct info
-			//should meetUpId be a UUID?
-//
-//            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getMeetUpId());
-//			startActivity(intent);
+            Intent intent = MeetUpDetailsActivity.newIntent(getActivity(), mMeetUp.getGroupMeetUpId());
+			startActivity(intent);
 
         }
     }

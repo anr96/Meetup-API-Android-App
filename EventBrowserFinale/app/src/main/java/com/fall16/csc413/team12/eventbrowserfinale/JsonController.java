@@ -42,15 +42,22 @@ public class JsonController {
         int method = Request.Method.GET;
 
 
+<<<<<<< HEAD
 		if (Latitude.length() == 0 && Longitude.length() == 0) {
 			Latitude = "37.774929";
 			Longitude = "-122.419416";
 		}
 
+=======
+>>>>>>> origin/master
         // Url with GET parameters
         String url = "https://api.meetup.com/find/groups?&sign=" +
                 "true&photo-host=public&lon=" + Longitude +
-                "&lat=" + Latitude + "&page=10&" + "&key=" + API_KEY;
+                "&lat=" + Latitude + "&page=20&" + "&key=" + API_KEY;
+
+//        String url = "https://api.meetup.com/find/groups?&sign=" +
+//                "true&photo-host=public&lon=122" +
+//                "&lat=37" + "&page=20&" + "&key=" + API_KEY;
 
 
 		/*
