@@ -144,9 +144,6 @@ public class MeetUpListFragment extends Fragment implements SearchView.OnQueryTe
 					public void onFailure(String errorMessage) {
 						Toast.makeText(getContext(), "Failed to retrieve data",
 								Toast.LENGTH_SHORT).show();
-						//textView.setVisibility(View.VISIBLE);
-						//textView.setText("Failed to retrieve data");
-						//Toast.makeText(MainActivity.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
 					}
 				});
 
